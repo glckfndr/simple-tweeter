@@ -1,4 +1,4 @@
-# Internship Test
+# Internship Test -test
 
 ### Elon Musk has destroyed Twitter and we need you to recreate it!
 
@@ -43,4 +43,3 @@ Using LLM for help on debugging something you are stuck in is acceptable. Asking
   * "Please analyze this Ruby method and give me a critique of without code examples: `paste of method`" -- **is OK**
   * "Please generate Ruby on Rails code for ..." -- **is considered excessive and NOT OK**
   * "Rewrite this controller to make it better: `Paste of a ruby file` -- **is considered excessive and NOT OK**
-
