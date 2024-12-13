@@ -10,10 +10,10 @@ RSpec.describe Tweet, type: :model do
         end
       end
 
-      describe 'assosiations' do
+      describe 'associations' do
         it 'should belong for a user' do
-          assosiation = described_class.reflect_on_assosiation(:user)
-          expect(assosiation.macro).to eq :belongs_to
+          association = described_class.reflect_on_association(:user)
+          expect(association.macro).to eq :belongs_to
         end
       end
     end
