@@ -17,6 +17,13 @@ RSpec.describe User, type: :model do
         user = build(:user, password: "@#≈™]€*([@")
         expect(user).to be_valid
       end
+
+      describe 'associations' do
+        it 'should have many tweets' do
+          association = described_class.reflect_on_association(:tweets)
+          expect(association.macro).to eq :has_many
+        end
+      end
     end
 
     context 'negative tests' do
