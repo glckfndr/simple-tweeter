@@ -1,0 +1,18 @@
+.tweets {
+  background-color: #92c0df;
+  width: 80%;
+  height: 100%;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 1.0rem
+}
+
+.tweets__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.0rem;
+  margin: 1rem 1rem;
+}
