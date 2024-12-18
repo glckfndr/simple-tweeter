@@ -21,9 +21,7 @@ function Tweets() {
     <div className='tweets'>
       <h2>All Tweets</h2>
       <ul className='tweets__list'>
-        {tweets.map(tweet => (
-            <TweetItem key={tweet.id} tweet={tweet} />
-        ))}
+        {tweets.map(tweet => (<TweetItem key={tweet.id} tweet={tweet} />))}
       </ul>
     </div>
   );
