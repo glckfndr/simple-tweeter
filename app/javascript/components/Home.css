@@ -1,0 +1,34 @@
+.home {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.home__title {
+  color: #333;
+  font-size: 2rem;
+}
+
+.home__description {
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.home__link {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  margin-top: 2rem;
+}
+
+.home__link:hover {
+  opacity: 0.75;
+}
+
+.home__divider {
+  margin: 2rem 0;
+}
