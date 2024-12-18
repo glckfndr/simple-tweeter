@@ -2,7 +2,8 @@ class User < ApplicationRecord
   has_many :tweets, dependent: :destroy
 
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :jwt_authenticatable, jwt_revocation_strategy: self # include devise-jwt
   validates :username, presence: true, length: { minimum: 3 }, uniqueness: true
   validates :email, uniqueness: true
   validate :validate_email
