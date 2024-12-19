@@ -96,4 +96,51 @@ RSpec.describe User, type: :model do
     end
 
   end
+
+  describe 'Token revocation' do
+    let(:user) { create(:user) }
+    let(:token) { Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first }
+    let(:decoded_token) { Warden::JWTAuth::TokenDecoder.new.call(token) }
+
+    describe '.jwt_revoked?' do
+      context 'when the user has not logged out' do
+        it 'returns false' do
+          expect(User.jwt_revoked?(decoded_token, user)).to be_falsey
+        end
+      end
+
+      context 'when the user has logged out' do
+        before do
+          user.update(last_logout_at: Time.current - 1.hour)
+        end
+
+        it 'returns true if the token was issued before the last logout' do
+          expect(User.jwt_revoked?(decoded_token, user)).to be_truthy
+        end
+
+        it 'returns false if the token was issued after the last logout' do
+          new_token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
+          new_decoded_token = Warden::JWTAuth::TokenDecoder.new.call(new_token)
+          expect(User.jwt_revoked?(new_decoded_token, user)).to be_falsey
+        end
+      end
+
+      context 'when the user has no last_logout_at timestamp' do
+        before do
+          user.update(last_logout_at: nil)
+        end
+
+        it 'returns false' do
+          expect(User.jwt_revoked?(decoded_token, user)).to be_falsey
+        end
+      end
+    end
+
+    describe '.revoke_jwt' do
+      it 'updates the last_logout_at timestamp' do
+        expect { User.revoke_jwt(decoded_token, user) }.to change { user.reload.last_logout_at }
+      end
+    end
+  end
+
 end
