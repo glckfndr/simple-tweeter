@@ -9,12 +9,12 @@ RSpec.describe User, type: :model do
       end
 
       it 'is valid when a password contains any characters repeat up to twice' do
-        user = build(:user, password: "22334455##")
+        user = build(:user, password: "22334455##", password_confirmation: "22334455##")
         expect(user).to be_valid
       end
 
       it 'is valid when a password contains at least one symbol' do
-        user = build(:user, password: "@#≈™]€*([@")
+        user = build(:user, password: "@#≈™]€*([@",password_confirmation:  "@#≈™]€*([@")
         expect(user).to be_valid
       end
 
@@ -110,15 +110,15 @@ RSpec.describe User, type: :model do
       end
 
       context 'when the user has logged out' do
-        before do
-          user.update(last_logout_at: Time.current - 1.hour)
-        end
 
         it 'returns true if the token was issued before the last logout' do
+          issued_at = Time.at(decoded_token['iat'])
+          user.update(last_logout_at: issued_at + 1.hour)
           expect(User.jwt_revoked?(decoded_token, user)).to be_truthy
         end
 
         it 'returns false if the token was issued after the last logout' do
+          user.update(last_logout_at: Time.current - 1.hour)
           new_token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
           new_decoded_token = Warden::JWTAuth::TokenDecoder.new.call(new_token)
           expect(User.jwt_revoked?(new_decoded_token, user)).to be_falsey

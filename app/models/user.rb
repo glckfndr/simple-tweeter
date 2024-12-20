@@ -9,6 +9,19 @@ class User < ApplicationRecord
   validate :validate_email
   validate :validate_password, if: -> { new_record? || !password.nil? }
 
+  def self.jwt_revoked?(decoded_token, user)
+    return false if user.last_logout_at.nil?
+
+    issued_at = Time.at(decoded_token['iat']).utc
+    revoked = issued_at < user.last_logout_at
+
+    revoked
+  end
+
+  def self.revoke_jwt(decoded_token, user)
+    user.update(last_logout_at: Time.current)
+  end
+
   private
 
   def validate_email
