@@ -1,6 +1,6 @@
 <nav class="navbar">
   <div class="navbar__brand">
-    <a class="navbar__home" href="/">Home</a>
+    <%= link_to 'Home', root_path, class: "navbar__home"%>
   </div>
   <ul class="navbar__list">
     <% if user_signed_in? %>

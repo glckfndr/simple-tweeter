@@ -8,12 +8,16 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module", defer: true %>
   </head>
-  <body>
-    <div class="container">
+  <body class="container">
+    <header>
       <%= render 'shared/navbar'%>
-      <p class="notice"><%= notice %></p>
-      <p class="alert"><%= alert %></p>
-      <%= yield %>
-      <div>
-      </body>
-    </html>
+      <%if notice %>
+        <p class="notice"><%= notice %></p>
+      <% end %>
+      <%if alert %>
+        <p class="alert"><%= alert %></p>
+      <% end %>
+    </header>
+    <%= yield %>
+  </body>
+</html>
