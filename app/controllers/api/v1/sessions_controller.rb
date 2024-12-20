@@ -10,7 +10,6 @@ class Api::V1::SessionsController < Devise::SessionsController
       token = current_token
       response.set_header('Authorization', "Bearer #{token}")
       user = User.find_by(email: params[:user][:email])
-      user = User.find_by(email: params[:user][:email])
       render json: {email: user.email, username: user.username, token: token }, status: :ok
     else
       render json: { error: 'Invalid email or password' }, status: :unauthorized
