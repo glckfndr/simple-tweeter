@@ -3,8 +3,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'tweets/index'
       post 'tweets/create'
-      get '/show/:id', to: 'tweets#show'
+      get 'show/:id', to: 'tweets#show'
       delete '/destroy/:id', to: 'tweets#destroy'
+      devise_for :users, controllers: {
+        sessions: 'api/v1/sessions',
+        registrations: 'api/v1/registrations'
+      }
     end
   end
 
