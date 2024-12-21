@@ -13,4 +13,6 @@ class User < ApplicationRecord
 
   has_many :followee_relationships, foreign_key: :follower_id, class_name: 'Follow', dependent: :destroy
   has_many :followees, through: :followee_relationships, source: :followee
+
+  has_many :retweets, dependent: :destroy
 end

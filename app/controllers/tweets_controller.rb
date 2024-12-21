@@ -55,6 +55,16 @@ class TweetsController < ApplicationController
     render json: { notice: "Tweet was successfully unliked." }, status: :ok
   end
 
+  def retweet
+    @tweet.retweets.create(user: current_user)
+    render json: { notice: "Tweet was successfully retweeted." }, status: :ok
+  end
+
+  def unretweet
+    @tweet.retweets.where(user: current_user).destroy_all
+    render json: { notice: "Tweet was successfully unretweeted." }, status: :ok
+  end
+
   private
 
   def find_tweet

@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     member do
       post 'like', to: 'tweets#like'
       delete 'unlike', to: 'tweets#unlike'
+      post 'retweet', to: 'tweets#retweet'
+      delete 'unretweet', to: 'tweets#unretweet'
     end
   end
   resources :users, only: [:show] do
