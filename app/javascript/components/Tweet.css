@@ -1,7 +1,8 @@
 .tweet {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
   border-bottom: 1px solid #ccc;
   margin: 0.5rem;
   background-color: rgb(169, 192, 209);
@@ -19,4 +20,5 @@
 .tweet__content {
   margin: 0;
   line-height: 1rem;
+  font-size: 1.5rem;
 }

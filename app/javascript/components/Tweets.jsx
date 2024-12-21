@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosConfig';
 import Tweet from './Tweet';
 import CreateTweet from './CreateTweet';
-import "./Tweets.css";
 
 const Tweets = () => {
   const [tweets, setTweets] = useState([]);
@@ -29,15 +28,22 @@ const Tweets = () => {
     setTweets([newTweet, ...tweets]);
   };
 
+  const handleTweetUpdated = (updatedTweet) => {
+    setTweets(tweets.map(tweet => tweet.id === updatedTweet.id ? updatedTweet : tweet));
+  };
+
   return (
     <div className="tweets">
       {isLoggedIn && <CreateTweet onTweetCreated={handleTweetCreated} />}
       <ul className="tweets__list">
         {tweets.map(tweet => (
-          <Tweet key={tweet.id}
-          tweet={tweet}
-          onDelete={handleDelete}
-          currentUser={currentUser}/>
+          <Tweet
+            key={tweet.id}
+            tweet={tweet}
+            onDelete={handleDelete}
+            onUpdate={handleTweetUpdated}
+            currentUser={currentUser}
+          />
         ))}
       </ul>
     </div>

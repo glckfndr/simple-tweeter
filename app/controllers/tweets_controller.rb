@@ -1,6 +1,6 @@
 class TweetsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
-  before_action :find_tweet, only: [:show, :destroy]
+  before_action :find_tweet, only: [:show, :destroy, :edit, :update]
 
   def index
     @tweets = Tweet.all.sort_by(&:created_at).reverse
@@ -10,8 +10,18 @@ class TweetsController < ApplicationController
   }
   end
 
-  def show
-    render json: @tweet.to_json(include: { user: { only: :username } })
+
+  def edit
+    render json: @tweet.as_json(include: { user: { only: :username } })
+  end
+
+  def update
+    if @tweet.update(tweet_params)
+      flash[:notice] = "Tweet was successfully updated."
+      render json: @tweet.as_json(include: { user: { only: :username } }), status: :ok
+    else
+      render json: @tweet.errors, status: :unprocessable_entity
+    end
   end
 
   def create

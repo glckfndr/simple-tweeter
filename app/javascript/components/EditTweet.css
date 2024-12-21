@@ -1,21 +1,13 @@
-.create-tweet {
+.edit-tweet {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 2rem;
-  padding: 1rem;
-  border-radius: 5px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
 
 }
 
-.create-tweet__title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.create-tweet__content {
+.edit-tweet__content {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;

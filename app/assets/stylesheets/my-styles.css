@@ -131,6 +131,7 @@ h1 {
   cursor: pointer;
   text-decoration: none;
   background-color: #184f1e;
+  margin-right: 2px;
 }
 
 .btn--primary {

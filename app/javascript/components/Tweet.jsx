@@ -1,9 +1,11 @@
-// filepath: /home/obula/railsProjects/internship_test_glckfndr_2025/app/javascript/components/Tweet.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import axios from '../utils/axiosConfig';
 import './Tweet.css';
+import EditTweet from './EditTweet';
 
-const Tweet = ({ tweet, onDelete, currentUser }) => {
+const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
+  const [isEditing, setIsEditing] = useState(false);
+
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)
       .then(response => {
@@ -15,16 +17,34 @@ const Tweet = ({ tweet, onDelete, currentUser }) => {
       });
   };
 
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleTweetUpdated = (updatedTweet) => {
+    setIsEditing(false);
+    onUpdate(updatedTweet);
+  };
+
   return (
     <div className='tweet'>
-      <div>
-      <p className='tweet__user'>posted by: {tweet.user.username}</p>
-      <p>{tweet.content}</p>
-      </div>
-      {currentUser === tweet.user.username && (
-        <button className="btn btn-small btn--danger" onClick={handleDelete}>
-          Delete
-        </button>
+      {isEditing ? (
+        <EditTweet tweetId={tweet.id} onTweetUpdated={handleTweetUpdated} />
+      ) : (
+        <div>
+          <p className='tweet__user'>posted by: {tweet.user.username}</p>
+          <p>{tweet.content}</p>
+          {currentUser === tweet.user.username && (
+            <>
+              <button className="btn btn-small btn--danger" onClick={handleDelete}>
+                Delete
+              </button>
+              <button className="btn btn-small btn--primary" onClick={handleEdit}>
+                Edit
+              </button>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
