@@ -5,6 +5,7 @@ import EditTweet from './EditTweet';
 
 const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
 
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)
@@ -26,6 +27,26 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
     onUpdate(updatedTweet);
   };
 
+  const handleLike = () => {
+    axios.post(`/tweets/${tweet.id}/like`)
+      .then(response => {
+        setLikes(likes + 1);
+      })
+      .catch(error => {
+        console.error('There was an error liking the tweet!', error);
+      });
+  };
+
+  const handleUnlike = () => {
+    axios.delete(`/tweets/${tweet.id}/unlike`)
+      .then(response => {
+        setLikes(likes - 1);
+      })
+      .catch(error => {
+        console.error('There was an error unliking the tweet!', error);
+      });
+  };
+
   return (
     <div className='tweet'>
       {isEditing ? (
@@ -34,6 +55,7 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
         <div>
           <p className='tweet__user'>posted by: {tweet.user.username}</p>
           <p>{tweet.content}</p>
+          <p>Likes: {likes}</p>
           {currentUser === tweet.user.username && (
             <>
               <button className="btn btn-small btn--danger" onClick={handleDelete}>
@@ -44,6 +66,12 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
               </button>
             </>
           )}
+          <button className="btn btn-small btn--primary" onClick={handleLike}>
+            Like
+          </button>
+          <button className="btn btn-small btn--primary" onClick={handleUnlike}>
+            Unlike
+          </button>
         </div>
       )}
     </div>

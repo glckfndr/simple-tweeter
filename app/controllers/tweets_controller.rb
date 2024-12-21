@@ -1,10 +1,10 @@
 class TweetsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-  before_action :find_tweet, only: [:show, :destroy, :edit, :update]
+  before_action :authenticate_user!, except: [:index]
+  before_action :find_tweet, only: [:destroy, :edit, :update, :like, :unlike]
 
   def index
     @tweets = Tweet.all.sort_by(&:created_at).reverse
-    render json: {tweets: @tweets.to_json(include: { user: { only: :username } }),
+    render json: {tweets: @tweets.to_json(include: { user: { only: :username }, likes: { only: :user_id } }),
     isLoggedIn: user_signed_in?,
     currentUser: current_user&.username
   }
@@ -42,6 +42,16 @@ class TweetsController < ApplicationController
     else
       render json: { error: "You can only delete your own tweets" }, status: :forbidden
     end
+  end
+
+  def like
+    @tweet.likes.create(user: current_user)
+    render json: { notice: "Tweet was successfully liked." }, status: :ok
+  end
+
+  def unlike
+    @tweet.likes.where(user: current_user).destroy_all
+    render json: { notice: "Tweet was successfully unliked." }, status: :ok
   end
 
   private
