@@ -8,4 +8,11 @@ Rails.application.routes.draw do
       delete 'unlike', to: 'tweets#unlike'
     end
   end
+  resources :users, only: [:show] do
+    member do
+      post 'follow', to: 'users#follow'
+      delete 'unfollow', to: 'users#unfollow'
+      get 'followees', to: 'users#followees'
+    end
+  end
 end
