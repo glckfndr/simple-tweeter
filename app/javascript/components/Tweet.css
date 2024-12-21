@@ -1,0 +1,22 @@
+.tweet {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+  margin: 0.5rem;
+  background-color: rgb(169, 192, 209);
+  padding: 0.5rem;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tweet__user {
+  font-weight: bold;
+  font-size: 1.75rem;
+  margin: 0
+}
+
+.tweet__content {
+  margin: 0;
+  line-height: 1rem;
+}
