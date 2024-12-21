@@ -6,7 +6,8 @@ class TweetsController < ApplicationController
     @tweets = Tweet.all.sort_by(&:created_at).reverse
     render json: {tweets: @tweets.to_json(include: { user: { only: :username }, likes: { only: :user_id } }),
     isLoggedIn: user_signed_in?,
-    currentUser: current_user&.username
+    currentUser: current_user&.username,
+    currentUserId: current_user&.id
   }
   end
 

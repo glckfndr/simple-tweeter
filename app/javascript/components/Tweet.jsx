@@ -1,11 +1,24 @@
-import React, { useState } from 'react';
+// filepath: /home/obula/railsProjects/internship_test_glckfndr_2025/app/javascript/components/Tweet.jsx
+import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosConfig';
 import './Tweet.css';
 import EditTweet from './EditTweet';
+import { Link } from 'react-router-dom';
 
 const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    axios.get(`/users/${tweet.user_id}`)
+      .then(response => {
+        setIsFollowing(response.data.followers.some(follower => follower.username === currentUser));
+      })
+      .catch(error => {
+        console.error('There was an error fetching the user!', error);
+      });
+  }, [tweet.user_id, currentUser]);
 
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)
@@ -47,15 +60,42 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
       });
   };
 
+  const handleFollow = () => {
+
+    axios.post(`/users/${tweet.user_id}/follow`)
+      .then(response => {
+        setIsFollowing(true);
+      })
+      .catch(error => {
+        console.error('There was an error following the user!', error);
+      });
+  };
+
+  const handleUnfollow = () => {
+    axios.delete(`/users/${tweet.user_id}/unfollow`)
+      .then(response => {
+        setIsFollowing(false);
+      })
+      .catch(error => {
+        console.error('There was an error unfollowing the user!', error);
+      });
+  };
+
   return (
     <div className='tweet'>
       {isEditing ? (
         <EditTweet tweetId={tweet.id} onTweetUpdated={handleTweetUpdated} />
       ) : (
         <div>
-          <p className='tweet__user'>posted by: {tweet.user.username}</p>
-          <p>{tweet.content}</p>
-          <p>Likes: {likes}</p>
+           <p className='tweet__user'>
+            posted by: {currentUser === tweet.user.username ? (
+              tweet.user.username
+            ) : (
+              <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>
+            )}
+          </p>
+          <p className='tweet__content'>{tweet.content}</p>
+          <p className='tweet__like'>Likes: {likes}</p>
           {currentUser === tweet.user.username && (
             <>
               <button className="btn btn-small btn--danger" onClick={handleDelete}>
@@ -70,8 +110,19 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser }) => {
             Like
           </button>
           <button className="btn btn-small btn--primary" onClick={handleUnlike}>
-            Unlike
+            Dislike
           </button>
+          {currentUser !== tweet.user.username && (
+            isFollowing ? (
+              <button className="btn btn-small btn--primary" onClick={handleUnfollow}>
+                Unfollow
+              </button>
+            ) : (
+              <button className="btn btn-small btn--primary" onClick={handleFollow}>
+                Follow
+              </button>
+            )
+          )}
         </div>
       )}
     </div>
