@@ -5,20 +5,20 @@
   <ul class="navbar__list">
     <% if user_signed_in? %>
       <div class="nav__user">
-        <p><%= "user: " + current_user.username %>!</p>
+        <p><%= "user: " + current_user.username %></p>
       </div>
       <li class="navbar__item">
-        <%= link_to 'Edit profile', edit_user_registration_path, class: "btn btn-primary" %>
+        <%= link_to 'Edit profile', edit_user_registration_path, class: "btn btn--primary" %>
       </li>
       <li class="navbar__item">
-        <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-primary" %>
+        <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn--primary" %>
       </li>
     <% else %>
       <li class="navbar__item">
-        <%= link_to "Login", new_user_session_path, class: "btn btn-primary" %>
+        <%= link_to "Login", new_user_session_path, class: "btn btn--primary" %>
       </li>
       <li class="navbar__item">
-        <%= link_to 'Sign up', new_user_registration_path, class: "btn btn-primary" %>
+        <%= link_to 'Sign up', new_user_registration_path, class: "btn btn--primary" %>
       </li>
     <% end %>
   </ul>
