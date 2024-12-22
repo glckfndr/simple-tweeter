@@ -36,6 +36,10 @@ header {
   opacity: 0;
 }
 
+.hidden {
+  display: none;
+}
+
 .alert {
   color: red;
   font-size: 1.5rem;
