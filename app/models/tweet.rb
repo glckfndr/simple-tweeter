@@ -6,6 +6,10 @@ class Tweet < ApplicationRecord
   validates :content, presence: true, length: { maximum: 255 }
 
   def as_json(options = {})
-    super(options.merge(include: { user: { only: [:username] } }))
+    super(options.merge(include: {
+      user: { only: [:username] },
+      likes: { only: [:user_id] },
+      retweets: { only: [:user_id] }
+    }))
   end
 end

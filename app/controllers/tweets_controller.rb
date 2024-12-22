@@ -1,14 +1,16 @@
 class TweetsController < ApplicationController
   before_action :authenticate_user!, except: [:index]
-  before_action :find_tweet, only: [:destroy, :edit, :update, :like, :unlike]
+  before_action :find_tweet, only: [:destroy, :edit, :update, :like, :unlike, :retweet, :unretweet]
 
   def index
-    @tweets = Tweet.all.sort_by(&:created_at).reverse
-    render json: {tweets: @tweets.to_json(include: { user: { only: :username }, likes: { only: :user_id } }),
-    isLoggedIn: user_signed_in?,
-    currentUser: current_user&.username,
-    currentUserId: current_user&.id
-  }
+    @tweets = Tweet.all.includes(:retweets, :likes, :user).sort_by(&:created_at).reverse
+    render json: {
+      tweets: @tweets.as_json(include: { user: { only: :username }, likes: { only: :user_id }, retweets: { only: :user_id } }),
+      isLoggedIn: user_signed_in?,
+      currentUser: current_user&.username,
+      currentUserId: current_user&.id
+    }
+
   end
 
 
@@ -56,8 +58,17 @@ class TweetsController < ApplicationController
   end
 
   def retweet
-    @tweet.retweets.create(user: current_user)
-    render json: { notice: "Tweet was successfully retweeted." }, status: :ok
+    existing_retweet = @tweet.retweets.find_by(user: current_user)
+    if existing_retweet
+      render json: { notice: "You have already retweeted this tweet." }, status: :ok
+    else
+      retweet = @tweet.retweets.create(user: current_user)
+      if retweet.persisted?
+        render json: { notice: "Tweet was successfully retweeted." }, status: :ok
+      else
+        render json: { error: "Unable to retweet.", messages: retweet.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
   end
 
   def unretweet
@@ -69,6 +80,7 @@ class TweetsController < ApplicationController
 
   def find_tweet
     @tweet = Tweet.find(params[:id])
+    render json: { error: "Tweet not found" }, status: :not_found unless @tweet
   end
 
   def tweet_params
