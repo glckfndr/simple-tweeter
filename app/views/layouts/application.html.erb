@@ -11,7 +11,7 @@
   <body class="container">
     <header>
       <%if notice.present? %>
-        <p class="notice"><%= notice %></p>
+        <p class="notice" data-controller="notice"><%= notice %></p>
       <% end %>
       <%if alert %>
         <p class="alert"><%= alert %></p>

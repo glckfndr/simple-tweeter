@@ -5,6 +5,9 @@ export default class extends Controller {
   connect() {
     setTimeout(() => {
       this.element.classList.add('fade-out');
-    }, 2000); // Wait for 3 seconds before starting the fade-out
+    }, 1500); // Wait for 2 seconds before starting the fade-out
+    setTimeout(() => {
+      this.element.classList.add('hidden');
+    }, 3000);
   }
 }
