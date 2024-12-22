@@ -146,10 +146,18 @@ h1 {
   background-color: #896932;
 }
 
-btn--small {
-  font-size: 2rem;
+.btn--joy {
+  background-color: #cc768c;
+}
+
+.btn--like {
+  background-color: #20adc0;
+}
+
+.btn--small {
+  font-size: 1.5rem;
   padding: 0.25rem 0.5rem;
-  height: 2.5rem;
+  height: 3.0rem;
 }
 
 .btn:hover {

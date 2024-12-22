@@ -15,7 +15,7 @@ const Tweets = () => {
   useEffect(() => {
     axios.get('/tweets')
       .then(response => {
-        setTweets(JSON.parse(response.data.tweets));
+        setTweets(response.data.tweets);
         setIsLoggedIn(response.data.isLoggedIn);
         setCurrentUser(response.data.currentUser);
         setCurrentUserId(response.data.currentUserId);
@@ -23,15 +23,15 @@ const Tweets = () => {
       .catch(error => {
         console.error("There was an error fetching the tweets!", error);
       });
-
-    axios.get(`/users/${currentUserId}/followees`)
-      .then(response => {
-        setFollowees(response.data.followees);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the followees!", error);
-      });
-  }, [currentUserId]);
+    currentUserId &&
+      axios.get(`/users/${currentUserId}/followees`)
+        .then(response => {
+          setFollowees(response.data.followees);
+        })
+        .catch(error => {
+          console.error("There was an error fetching the followees!", error);
+        });
+  }, [currentUserId, filter]);
 
   const handleDelete = (id) => {
     setTweets(tweets.filter(tweet => tweet.id !== id));
@@ -41,8 +41,20 @@ const Tweets = () => {
     setTweets([newTweet, ...tweets]);
   };
 
+  function getFolloweesTweets() {
+    return tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
+  }
+
+  const getFolloweeRetweets = () => {
+
+    return tweets.filter(tweet => tweet.retweets &&
+      tweet.retweets.some(retweet =>
+        followees.some(followee => followee.id === retweet.user_id)));
+  };
+
   const filteredTweets = filter === 'all' ? tweets :
-      tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
+    filter === 'followees' ? getFolloweesTweets() :
+      getFolloweeRetweets();
 
   return (
     <div className="tweets">
@@ -51,11 +63,13 @@ const Tweets = () => {
         <button onClick={() => setFilter('all')} className={"btn " + (filter === 'all' ? 'active' : '')}>
           All Tweets
         </button>
-        <button onClick={() => setFilter('followees')} className={"btn " +  (filter === 'followees' ? 'active' : '')}>
+        <button onClick={() => setFilter('followees')} className={"btn btn--joy " + (filter === 'followees' ? 'active' : '')}>
           Followees Tweets
-          </button>
+        </button>
+        <button onClick={() => setFilter('retweeted')} className={"btn btn--primary " + (filter === 'retweeted' ? 'active' : '')}>Retweeted Tweets</button>
       </div>
       <ul className="tweets__list">
+
         {filteredTweets.map(tweet => (
           <Tweet
             key={tweet.id}
@@ -63,6 +77,7 @@ const Tweets = () => {
             onDelete={handleDelete}
             onUpdate={handleTweetCreated}
             currentUser={currentUser}
+            currentUserId={currentUserId}
           />
         ))}
       </ul>

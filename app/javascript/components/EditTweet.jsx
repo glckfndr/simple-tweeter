@@ -19,7 +19,6 @@ const EditTweet = ({ tweetId, onTweetUpdated }) => {
     e.preventDefault();
     axios.put(`/tweets/${tweetId}`, { tweet: { content } })
       .then(response => {
-        console.log('Tweet updated:', response.data);
         onTweetUpdated(response.data);
       })
       .catch(error => {
@@ -43,7 +42,7 @@ const EditTweet = ({ tweetId, onTweetUpdated }) => {
         />
         <div>
 
-        <button className='btn btn-small' type="submit">Update Tweet</button>
+          <button className='btn btn-small' type="submit">Update Tweet</button>
         </div>
       </div>
     </form>

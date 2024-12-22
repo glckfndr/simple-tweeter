@@ -6,22 +6,36 @@
   border-bottom: 1px solid #ccc;
   margin: 0.5rem;
   background-color: rgb(169, 192, 209);
-  padding: 0.5rem;
   border-radius: 5px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 95%;
+
+}
+
+.tweet__header {
+  display: flex;
+  justify-content: space-between;
+  width: 72rem;
+  color: white;
+  background-color: rgb(147, 166, 181);
+  margin: 0;
+  border-radius: 2px;
 }
 
 .tweet__user {
   font-weight: bold;
   font-size: 1.75rem;
-  margin: 0
+  margin: 0;
+  margin-left: 1rem;
+  color: rgb(40, 40, 24);
 }
 
 .tweet__content {
   margin: 0;
+  margin-left: 1rem;
   line-height: 2rem;
   font-size: 1.5rem;
-  background-color: royalblue;
+
 }
 
 .tweet__like {
@@ -29,4 +43,8 @@
   line-height: 2rem;
   font-size: 1.5rem;
   background-color: rgb(52, 102, 144);
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  place-self: end;
 }

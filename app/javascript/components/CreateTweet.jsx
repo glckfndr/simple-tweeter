@@ -9,7 +9,6 @@ const CreateTweet = ({ onTweetCreated }) => {
     e.preventDefault();
     axios.post('/tweets', { tweet: { content } })
       .then(response => {
-        console.log('Tweet created:', response.data);
         onTweetCreated(response.data);
         setContent(''); // Clear the textarea after successful tweet creation
       })
@@ -26,14 +25,14 @@ const CreateTweet = ({ onTweetCreated }) => {
   }
 
   return (
-    <form  onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
       <div className='create-tweet'>
-      <h3 className="create-tweet__title">Tweets</h3>
+        <h3 className="create-tweet__title">Tweets</h3>
         <textarea rows={4} cols={70}
-        className='create-tweet__content'
-        value={content}
-        onChange={handleContentChange}
-        placeholder="Comment tweet..." />
+          className='create-tweet__content'
+          value={content}
+          onChange={handleContentChange}
+          placeholder="Comment tweet..." />
         <button className='btn btn--small' type="submit">Create Tweet</button>
       </div>
     </form>
