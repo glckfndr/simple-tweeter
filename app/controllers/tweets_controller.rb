@@ -13,7 +13,6 @@ class TweetsController < ApplicationController
 
   end
 
-
   def edit
     render json: @tweet.as_json(include: { user: { only: :username } })
   end
