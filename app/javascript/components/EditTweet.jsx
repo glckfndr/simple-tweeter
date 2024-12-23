@@ -38,7 +38,6 @@ const EditTweet = ({ tweetId, onTweetUpdated }) => {
         <textarea rows={4} cols={80} className='edit-tweet__content'
           value={content}
           onChange={handleContentChange}
-
         />
         <div>
 

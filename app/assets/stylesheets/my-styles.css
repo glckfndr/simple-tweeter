@@ -27,9 +27,7 @@ header {
   margin: 0;
   line-height: 2rem;
   transition: opacity 1s ease-out;
-  /* Smooth transition */
   opacity: 1;
-  /* Ensure the notice starts fully opaque */
 }
 
 .notice.fade-out {
