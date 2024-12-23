@@ -78,6 +78,7 @@ const Tweets = () => {
             onUpdate={handleTweetCreated}
             currentUser={currentUser}
             currentUserId={currentUserId}
+            isLoggedIn={isLoggedIn}
           />
         ))}
       </ul>

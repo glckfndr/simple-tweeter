@@ -5,7 +5,7 @@ import './Tweet.css';
 import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
 
-const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId }) => {
+const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -145,7 +145,7 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId }) => {
               </button>
             </>
           )}
-          {currentUser !== tweet.user.username && (
+          {isLoggedIn && currentUser !== tweet.user.username && (
             !isLiked ? (
               <button className="btn btn--small btn--like" onClick={handleLike}>
                 Like
@@ -155,7 +155,7 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId }) => {
               </button>)
           )
           }
-          {currentUser !== tweet.user.username && (
+          {isLoggedIn && currentUser !== tweet.user.username && (
             isFollowing ? (
               <button className="btn btn--small btn--joy" onClick={handleUnfollow}>
                 Unfollow
@@ -166,7 +166,7 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId }) => {
               </button>
             )
           )}
-          {currentUser !== tweet.user.username && (isRetweeted ? (
+          {isLoggedIn && currentUser !== tweet.user.username && (isRetweeted ? (
             <button className="btn btn--small btn--primary" onClick={handleUnretweet}>
               Unretweet
             </button>
