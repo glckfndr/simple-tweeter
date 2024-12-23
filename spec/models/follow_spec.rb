@@ -1,10 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Follow, type: :model do
+  let(:follower) { create(:user) }
+  let(:followee) { create(:user) }
+  subject { create(:follow, follower: follower, followee: followee) }
+
+  describe 'associations' do
+    it 'belongs to follower' do
+      association = described_class.reflect_on_association(:follower)
+      expect(association.macro).to eq :belongs_to
+    end
+
+    it 'belongs to followee' do
+      association = described_class.reflect_on_association(:followee)
+      expect(association.macro).to eq :belongs_to
+    end
+  end
+
   describe 'validations' do
-    let(:follower) { create(:user) }
-    let(:followee) { create(:user) }
-    subject { create(:follow, follower: follower, followee: followee) }
 
     it 'is valid with valid attributes' do
       expect(subject).to be_valid

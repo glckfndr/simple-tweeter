@@ -1,11 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Like, type: :model do
+  let(:user) { create(:user) }
+  let(:tweet) { create(:tweet) }
+
+  describe 'associations' do
+    it 'belongs to user' do
+      association = described_class.reflect_on_association(:user)
+      expect(association.macro).to eq :belongs_to
+    end
+
+    it 'belongs to tweet' do
+      association = described_class.reflect_on_association(:tweet)
+      expect(association.macro).to eq :belongs_to
+    end
+  end
 
   describe 'validations' do
-    let(:user) { create(:user) }
-    let(:tweet) { create(:tweet) }
-
     it 'is valid with valid attributes' do
       like = Like.new(user: user, tweet: tweet)
       expect(like).to be_valid
