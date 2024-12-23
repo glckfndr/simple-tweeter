@@ -1,5 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe Like, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  describe 'validations' do
+    let(:user) { create(:user) }
+    let(:tweet) { create(:tweet) }
+
+    it 'is valid with valid attributes' do
+      like = Like.new(user: user, tweet: tweet)
+      expect(like).to be_valid
+    end
+
+    it 'is not valid without a user' do
+      like = Like.new(user: nil, tweet: tweet)
+      expect(like).to_not be_valid
+    end
+
+    it 'is not valid without a tweet' do
+      like = Like.new(user: user, tweet: nil)
+      expect(like).to_not be_valid
+    end
+
+    it 'is not valid with a duplicate like for the same tweet by the same user' do
+      Like.create(user: user, tweet: tweet)
+      duplicate_like = Like.new(user: user, tweet: tweet)
+      expect(duplicate_like).to_not be_valid
+    end
+  end
 end
