@@ -1,22 +1,43 @@
 require 'rails_helper'
 
 RSpec.describe Tweet, type: :model do
-  it 'is valid with valid attributes' do
-    user = create(:user)
-    tweet = Tweet.new(content: 'This is a valid tweet', user: user)
-    expect(tweet).to be_valid
-  end
+  describe 'validation' do
+    context 'positive tests' do
+      describe 'content' do
+        it 'should not be longer then 255 characters' do
+          tweet = build(:tweet)
+          expect(tweet).to be_valid
+        end
+      end
 
-  it 'is not valid without content' do
-    user = create(:user)
-    tweet = Tweet.new(content: nil, user: user)
-    expect(tweet).not_to be_valid
-  end
+      describe 'associations' do
+        it 'should belong for a user' do
+          association = described_class.reflect_on_association(:user)
+          expect(association.macro).to eq :belongs_to
+        end
+      end
+    end
 
-  it 'is not valid with content longer than 255 characters' do
-    user = create(:user)
-    long_content = 'a' * 256
-    tweet = Tweet.new(content: long_content, user: user)
-    expect(tweet).not_to be_valid
+    context 'negative tests' do
+      describe 'content' do
+        it 'is invalid when it is longer than 255 chars' do
+          tweet = build(:tweet, content: "c" * 256)
+          expect(tweet).not_to be_valid
+        end
+
+        it 'is invalid when it is nil' do
+          tweet = build(:tweet, content: nil)
+          expect(tweet).not_to be_valid
+        end
+
+        it 'is invalid when it contains only blanks' do
+          20.times do
+            tweet = build(:tweet, content: ' ' * rand(1..255))
+            expect(tweet).not_to be_valid
+          end
+        end
+      end
+    end
+
   end
 end
