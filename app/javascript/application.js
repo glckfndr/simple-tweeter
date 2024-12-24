@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "./controllers"
 import "../assets/stylesheets/my-styles.css";
+import "./channels"

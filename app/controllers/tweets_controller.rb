@@ -29,8 +29,10 @@ class TweetsController < ApplicationController
   def create
     @tweet = current_user.tweets.build(tweet_params)
     if @tweet.save
-      flash[:notice] = "Tweet was successfully created."
-      render json: @tweet.to_json(include: { user: { only: :username } }), status: :created
+      #flash[:notice] = "Tweet was successfully created."
+      data = @tweet.as_json(include: { user: { only: :username } })
+      ActionCable.server.broadcast 'tweets_channel', {tweet: data}
+      render json: data, status: :created
     else
       render json: @tweet.errors, status: :unprocessable_entity
     end

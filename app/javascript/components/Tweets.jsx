@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import axios from '../utils/axiosConfig';
+import createTweetChannel from '../channels/tweets_channel';
 import Tweet from './Tweet';
 import CreateTweet from './CreateTweet';
 import './Tweets.css';
@@ -11,6 +12,9 @@ const Tweets = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [filter, setFilter] = useState('all'); // 'all' or 'followees'
   const [followees, setFollowees] = useState([]);
+
+
+
 
   useEffect(() => {
     axios.get('/tweets')
@@ -31,6 +35,14 @@ const Tweets = () => {
         .catch(error => {
           console.error("There was an error fetching the followees!", error);
         });
+
+    const subscription = createTweetChannel((data) => {
+      setTweets((prevTweets) => [data.tweet, ...prevTweets]);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [currentUserId, filter]);
 
   const handleDelete = (id) => {
