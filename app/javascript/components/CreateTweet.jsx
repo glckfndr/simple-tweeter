@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import axios from '../utils/axiosConfig';
 import './CreateTweet.css';
 
-const CreateTweet = ({ onTweetCreated }) => {
+const CreateTweet = () => {
   const [content, setContent] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('/tweets', { tweet: { content } })
       .then(response => {
-        onTweetCreated(response.data);
         setContent(''); // Clear the textarea after successful tweet creation
       })
       .catch(error => {

@@ -29,7 +29,7 @@ class TweetsController < ApplicationController
   def create
     @tweet = current_user.tweets.build(tweet_params)
     if @tweet.save
-      #flash[:notice] = "Tweet was successfully created."
+      flash[:notice] = "Tweet was successfully created."
       data = @tweet.as_json(include: { user: { only: :username } })
       ActionCable.server.broadcast 'tweets_channel', {tweet: data}
       render json: data, status: :created
@@ -41,6 +41,7 @@ class TweetsController < ApplicationController
   def destroy
     if @tweet.user == current_user
       @tweet.destroy
+      ActionCable.server.broadcast 'tweets_channel', {delete: @tweet.id}
       flash[:notice] = "Tweet was successfully deleted."
       head :no_content
     else

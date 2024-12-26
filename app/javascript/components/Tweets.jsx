@@ -13,9 +13,6 @@ const Tweets = () => {
   const [filter, setFilter] = useState('all'); // 'all' or 'followees'
   const [followees, setFollowees] = useState([]);
 
-
-
-
   useEffect(() => {
     axios.get('/tweets')
       .then(response => {
@@ -37,21 +34,17 @@ const Tweets = () => {
         });
 
     const subscription = createTweetChannel((data) => {
-      setTweets((prevTweets) => [data.tweet, ...prevTweets]);
+      if (data.tweet) {
+        setTweets((prevTweets) => [data.tweet, ...prevTweets]);
+      } else if (data.delete) {
+        setTweets((prevTweets) => prevTweets.filter(tweet => tweet.id !== data.delete));
+      }
     });
 
     return () => {
       subscription.unsubscribe();
     };
   }, [currentUserId, filter]);
-
-  const handleDelete = (id) => {
-    setTweets(tweets.filter(tweet => tweet.id !== id));
-  };
-
-  const handleTweetCreated = (newTweet) => {
-    setTweets([newTweet, ...tweets]);
-  };
 
   function getFolloweesTweets() {
     return tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
@@ -70,7 +63,7 @@ const Tweets = () => {
 
   return (
     <div className="tweets">
-      {isLoggedIn && <CreateTweet onTweetCreated={handleTweetCreated} />}
+      {isLoggedIn && <CreateTweet />}
       <div className="tweets__filter">
         <button onClick={() => setFilter('all')} className={"btn " + (filter === 'all' ? 'active' : '')}>
           All Tweets
@@ -86,8 +79,6 @@ const Tweets = () => {
           <Tweet
             key={tweet.id}
             tweet={tweet}
-            onDelete={handleDelete}
-            onUpdate={handleTweetCreated}
             currentUser={currentUser}
             currentUserId={currentUserId}
             isLoggedIn={isLoggedIn}

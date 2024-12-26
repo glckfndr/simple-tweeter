@@ -5,7 +5,7 @@ import './Tweet.css';
 import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
 
-const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId, isLoggedIn }) => {
+const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -35,7 +35,7 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId, isLogged
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)
       .then(response => {
-        onDelete(tweet.id);
+
       })
       .catch(error => {
         console.error('There was an error deleting the tweet!', error);
@@ -48,7 +48,6 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId, isLogged
 
   const handleTweetUpdated = (updatedTweet) => {
     setIsEditing(false);
-    onUpdate(updatedTweet);
   };
 
   const handleLike = () => {
@@ -74,7 +73,6 @@ const Tweet = ({ tweet, onDelete, onUpdate, currentUser, currentUserId, isLogged
   };
 
   const handleFollow = () => {
-
     axios.post(`/users/${tweet.user_id}/follow`)
       .then(response => {
         setIsFollowing(true);
