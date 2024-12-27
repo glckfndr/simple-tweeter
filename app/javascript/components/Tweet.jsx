@@ -20,7 +20,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsFollowing(response.data.followers.some(follower => follower.username === currentUser.name));
       })
       .catch(error => {
-        console.error('There was an error fetching the user!', error);
+        console.error('Tweet got an error fetching the user!', error);
       });
 
     if (tweet.retweets) {
@@ -38,7 +38,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
 
       })
       .catch(error => {
-        console.error('There was an error deleting the tweet!', error);
+        console.error('Tweet got an error deleting the tweet!', error);
       });
   };
 
@@ -57,7 +57,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsLiked(true);
       })
       .catch(error => {
-        console.error('There was an error liking the tweet!', error);
+        console.error('Tweet got an error liking the tweet!', error);
       });
   };
 
@@ -68,7 +68,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsLiked(false);
       })
       .catch(error => {
-        console.error('There was an error unliking the tweet!', error);
+        console.error('Tweet got an error unliking the tweet!', error);
       });
   };
 
@@ -78,7 +78,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsFollowing(true);
       })
       .catch(error => {
-        console.error('There was an error following the user!', error);
+        console.error('Tweet got an error an following the user!', error);
       });
   };
 
@@ -88,7 +88,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsFollowing(false);
       })
       .catch(error => {
-        console.error('There was an error unfollowing the user!', error);
+        console.error('Tweet got an error unfollowing the user!', error);
       });
   };
 
@@ -99,7 +99,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsRetweeted(true);
       })
       .catch(error => {
-        console.error('There was an error retweeting the tweet!', error);
+        console.error('Tweet got an error retweeting the tweet!', error);
       });
   };
 
@@ -110,7 +110,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         setIsRetweeted(false);
       })
       .catch(error => {
-        console.error('There was an error unretweeting the tweet!', error);
+        console.error('Tweet got an error unretweeting the tweet!', error);
       });
   };
 
