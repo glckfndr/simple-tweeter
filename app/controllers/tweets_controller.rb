@@ -7,8 +7,7 @@ class TweetsController < ApplicationController
     render json: {
       tweets: @tweets.as_json(include: { user: { only: :username }, likes: { only: :user_id }, retweets: { only: :user_id } }),
       isLoggedIn: user_signed_in?,
-      currentUser: current_user&.username,
-      currentUserId: current_user&.id
+      currentUser: {name: current_user&.username, id: current_user&.id}
     }
 
   end

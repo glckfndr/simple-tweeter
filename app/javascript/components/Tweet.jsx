@@ -5,7 +5,7 @@ import './Tweet.css';
 import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
 
-const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
+const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -17,20 +17,20 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
   useEffect(() => {
     axios.get(`/users/${tweet.user_id}`)
       .then(response => {
-        setIsFollowing(response.data.followers.some(follower => follower.username === currentUser));
+        setIsFollowing(response.data.followers.some(follower => follower.username === currentUser.name));
       })
       .catch(error => {
         console.error('There was an error fetching the user!', error);
       });
 
     if (tweet.retweets) {
-      setIsRetweeted(tweet.retweets.some(retweet => retweet.user_id === currentUserId));
+      setIsRetweeted(tweet.retweets.some(retweet => retweet.user_id === currentUser.id));
     }
 
     if (tweet.likes) {
-      setIsLiked(tweet.likes.some(like => like.user_id === currentUserId));
+      setIsLiked(tweet.likes.some(like => like.user_id === currentUser.id));
     }
-  }, [tweet.user_id, currentUser, tweet.retweets, tweet.likes]);
+  }, [tweet.user_id, currentUser.name, tweet.retweets, tweet.likes]);
 
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)
@@ -122,7 +122,7 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
         <div>
           <div className='tweet__header'>
             <p className='tweet__user'>
-              {currentUser === tweet.user.username ? (
+              {currentUser.name === tweet.user.username ? (
                 tweet.user.username
               ) : (
                 <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>
@@ -133,7 +133,7 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
           </div>
           <p className='tweet__content'>{tweet.content}</p>
 
-          {currentUser === tweet.user.username && (
+          {currentUser.name === tweet.user.username && (
             <>
               <button className="btn btn--small btn--danger" onClick={handleDelete}>
                 Delete
@@ -143,7 +143,7 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
               </button>
             </>
           )}
-          {isLoggedIn && currentUser !== tweet.user.username && (
+          {isLoggedIn && currentUser.name !== tweet.user.username && (
             !isLiked ? (
               <button className="btn btn--small btn--like" onClick={handleLike}>
                 Like
@@ -153,7 +153,7 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
               </button>)
           )
           }
-          {isLoggedIn && currentUser !== tweet.user.username && (
+          {isLoggedIn && currentUser.name !== tweet.user.username && (
             isFollowing ? (
               <button className="btn btn--small btn--joy" onClick={handleUnfollow}>
                 Unfollow
@@ -164,7 +164,7 @@ const Tweet = ({ tweet, currentUser, currentUserId, isLoggedIn }) => {
               </button>
             )
           )}
-          {isLoggedIn && currentUser !== tweet.user.username && (isRetweeted ? (
+          {isLoggedIn && currentUser.name !== tweet.user.username && (isRetweeted ? (
             <button className="btn btn--small btn--primary" onClick={handleUnretweet}>
               Unretweet
             </button>

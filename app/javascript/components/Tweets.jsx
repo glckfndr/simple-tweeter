@@ -9,7 +9,6 @@ const Tweets = () => {
   const [tweets, setTweets] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [currentUserId, setCurrentUserId] = useState(null);
   const [filter, setFilter] = useState('all'); // 'all' or 'followees'
   const [followees, setFollowees] = useState([]);
 
@@ -19,13 +18,12 @@ const Tweets = () => {
         setTweets(response.data.tweets);
         setIsLoggedIn(response.data.isLoggedIn);
         setCurrentUser(response.data.currentUser);
-        setCurrentUserId(response.data.currentUserId);
       })
       .catch(error => {
         console.error("There was an error fetching the tweets!", error);
       });
-    currentUserId &&
-      axios.get(`/users/${currentUserId}/followees`)
+    currentUser?.id &&
+      axios.get(`/users/${currentUser.id}/followees`)
         .then(response => {
           setFollowees(response.data.followees);
         })
@@ -44,7 +42,7 @@ const Tweets = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [currentUserId, filter]);
+  }, [currentUser?.name, filter]);
 
   function getFolloweesTweets() {
     return tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
@@ -80,7 +78,6 @@ const Tweets = () => {
             key={tweet.id}
             tweet={tweet}
             currentUser={currentUser}
-            currentUserId={currentUserId}
             isLoggedIn={isLoggedIn}
           />
         ))}
