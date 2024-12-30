@@ -144,15 +144,12 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
               </button>
             </>
           )}
-          {isLoggedIn && !isUserCurrent() && (
-            <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
-          )
-          }
-          {isLoggedIn && !isUserCurrent() && (
-            <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
-          )}
           {isLoggedIn && !isUserCurrent() &&
-            <RetweetButtons isRetweeted={isRetweeted} handleRetweet={handleRetweet} handleUnretweet={handleUnretweet} />}
+            <>
+              <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
+              <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
+              <RetweetButtons isRetweeted={isRetweeted} handleRetweet={handleRetweet} handleUnretweet={handleUnretweet} />
+            </>}
         </div>
       )}
     </div>
