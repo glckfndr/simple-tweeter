@@ -4,6 +4,7 @@ import axios from '../utils/axiosConfig';
 import './Tweet.css';
 import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
+import LikeButtons from './LikeButtons';
 
 const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -144,13 +145,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
             </>
           )}
           {isLoggedIn && currentUser.name !== tweet.user.username && (
-            !isLiked ? (
-              <button className="btn btn--small btn--like" onClick={handleLike}>
-                Like
-              </button>) : (
-              <button className="btn btn--small btn--like" onClick={handleUnlike}>
-                DisLike
-              </button>)
+            <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
           )
           }
           {isLoggedIn && currentUser.name !== tweet.user.username && (
