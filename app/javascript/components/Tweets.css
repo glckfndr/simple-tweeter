@@ -4,13 +4,23 @@
   flex-wrap: wrap;
   justify-content: space-between;
   background-color: beige;
+  padding-top: 1px;
+}
+
+.tweets--center {
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.tweets__title {
+  text-align: center;
 }
 
 .tweets__list {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: 20px;
+  margin: 0;
 }
 
 .tweets__filter {
