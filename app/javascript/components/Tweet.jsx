@@ -19,6 +19,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const isUserCurrent = () => currentUser.name === tweet.user.username;
 
   useEffect(() => {
+    if (!isLoggedIn) return;
     axios.get(`/users/${tweet.user_id}`)
       .then(response => {
         setIsFollowing(response.data.followers.some(follower => follower.username === currentUser.name));
@@ -126,8 +127,8 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         <div>
           <div className='tweet__header'>
             <p className='tweet__user'>
-              {isUserCurrent() ?
-                tweet.user.username : <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>}
+              {isUserCurrent() ? tweet.user.username :
+                <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>}
             </p>
             <p className='tweet__like'>Likes: {likes}</p>
 
