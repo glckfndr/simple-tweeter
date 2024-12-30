@@ -6,6 +6,7 @@ import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
 import LikeButtons from './LikeButtons';
 import FollowButtons from './FollowButtons';
+import RetweetButtons from './RetweetButtons';
 
 const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -150,15 +151,8 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
           {isLoggedIn && !isUserCurrent() && (
             <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
           )}
-          {isLoggedIn && !isUserCurrent() && (isRetweeted ? (
-            <button className="btn btn--small btn--primary" onClick={handleUnretweet}>
-              Unretweet
-            </button>
-          ) : (
-            <button className="btn btn--small btn--primary" onClick={handleRetweet}>
-              Retweet
-            </button>
-          ))}
+          {isLoggedIn && !isUserCurrent() &&
+            <RetweetButtons isRetweeted={isRetweeted} handleRetweet={handleRetweet} handleUnretweet={handleUnretweet} />}
         </div>
       )}
     </div>
