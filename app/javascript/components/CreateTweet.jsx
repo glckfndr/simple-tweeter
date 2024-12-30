@@ -26,7 +26,7 @@ const CreateTweet = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div className='create-tweet'>
-        <h3 className="create-tweet__title">Tweets</h3>
+        <h3 className="create-tweet__title">Write something meaningful!</h3>
         <textarea rows={4} cols={70}
           className='create-tweet__content'
           value={content}

@@ -60,19 +60,21 @@ const Tweets = () => {
       getFolloweeRetweets();
 
   return (
-    <div className="tweets">
+    <div className={"tweets " + (!isLoggedIn ? 'tweets--center' : '')}>
+      {!isLoggedIn && <h3 className='tweets__title'>Tweets</h3>}
       {isLoggedIn && <CreateTweet />}
       <div className="tweets__filter">
-        <button onClick={() => setFilter('all')} className={"btn " + (filter === 'all' ? 'active' : '')}>
-          All Tweets
-        </button>
-        <button onClick={() => setFilter('followees')} className={"btn btn--joy " + (filter === 'followees' ? 'active' : '')}>
-          Followees Tweets
-        </button>
-        <button onClick={() => setFilter('retweeted')} className={"btn btn--primary " + (filter === 'retweeted' ? 'active' : '')}>Retweeted Tweets</button>
+        {isLoggedIn && <>
+          <button onClick={() => setFilter('all')} className={"btn " + (filter === 'all' ? 'active' : '')}>
+            All Tweets
+          </button>
+          <button onClick={() => setFilter('followees')} className={"btn btn--joy " + (filter === 'followees' ? 'active' : '')}>
+            Followees Tweets
+          </button>
+          <button onClick={() => setFilter('retweeted')} className={"btn btn--primary " + (filter === 'retweeted' ? 'active' : '')}>Retweeted Tweets</button>
+        </>}
       </div>
       <ul className="tweets__list">
-
         {filteredTweets.map(tweet => (
           <Tweet
             key={tweet.id}

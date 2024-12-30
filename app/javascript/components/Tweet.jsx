@@ -121,7 +121,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
 
   return (
     <div className='tweet'>
-      {isEditing ? (
+      {isLoggedIn && isEditing ? (
         <EditTweet tweetId={tweet.id} onTweetUpdated={handleTweetUpdated} />
       ) : (
         <div>
@@ -135,7 +135,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
           </div>
           <p className='tweet__content'>{tweet.content}</p>
 
-          {isUserCurrent() && (
+          {isLoggedIn && isUserCurrent() &&
             <>
               <button className="btn btn--small btn--danger" onClick={handleDelete}>
                 Delete
@@ -144,7 +144,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
                 Edit
               </button>
             </>
-          )}
+          }
           {isLoggedIn && !isUserCurrent() &&
             <>
               <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
