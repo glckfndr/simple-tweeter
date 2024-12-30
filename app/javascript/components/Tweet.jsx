@@ -5,6 +5,7 @@ import './Tweet.css';
 import EditTweet from './EditTweet';
 import { Link } from 'react-router-dom';
 import LikeButtons from './LikeButtons';
+import FollowButtons from './FollowButtons';
 
 const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -149,15 +150,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
           )
           }
           {isLoggedIn && currentUser.name !== tweet.user.username && (
-            isFollowing ? (
-              <button className="btn btn--small btn--joy" onClick={handleUnfollow}>
-                Unfollow
-              </button>
-            ) : (
-              <button className="btn btn--small btn--joy" onClick={handleFollow}>
-                Follow
-              </button>
-            )
+            <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
           )}
           {isLoggedIn && currentUser.name !== tweet.user.username && (isRetweeted ? (
             <button className="btn btn--small btn--primary" onClick={handleUnretweet}>
