@@ -15,6 +15,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isRetweeted, setIsRetweeted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
+  const isUserCurrent = () => currentUser.name === tweet.user.username;
 
   useEffect(() => {
     axios.get(`/users/${tweet.user_id}`)
@@ -124,18 +125,15 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         <div>
           <div className='tweet__header'>
             <p className='tweet__user'>
-              {currentUser.name === tweet.user.username ? (
-                tweet.user.username
-              ) : (
-                <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>
-              )}
+              {isUserCurrent() ?
+                tweet.user.username : <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>}
             </p>
             <p className='tweet__like'>Likes: {likes}</p>
 
           </div>
           <p className='tweet__content'>{tweet.content}</p>
 
-          {currentUser.name === tweet.user.username && (
+          {isUserCurrent() && (
             <>
               <button className="btn btn--small btn--danger" onClick={handleDelete}>
                 Delete
@@ -145,14 +143,14 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
               </button>
             </>
           )}
-          {isLoggedIn && currentUser.name !== tweet.user.username && (
+          {isLoggedIn && !isUserCurrent() && (
             <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
           )
           }
-          {isLoggedIn && currentUser.name !== tweet.user.username && (
+          {isLoggedIn && !isUserCurrent() && (
             <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
           )}
-          {isLoggedIn && currentUser.name !== tweet.user.username && (isRetweeted ? (
+          {isLoggedIn && !isUserCurrent() && (isRetweeted ? (
             <button className="btn btn--small btn--primary" onClick={handleUnretweet}>
               Unretweet
             </button>
