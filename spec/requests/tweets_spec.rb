@@ -18,6 +18,31 @@ RSpec.describe TweetsController, type: :controller do
       expect(response).to be_successful
       expect(assigns(:tweets)).not_to be_nil
     end
+
+    it "marks followed authors with is_following_author=true" do
+      author = create(:user)
+      followed_tweet = create(:tweet, user: author)
+      create(:follow, follower: user, followee: author)
+
+      get :index
+      json = JSON.parse(response.body)
+      payload_tweet = json['tweets'].find { |t| t['id'] == followed_tweet.id }
+
+      expect(payload_tweet).not_to be_nil
+      expect(payload_tweet['is_following_author']).to eq(true)
+    end
+
+    it "marks non-followed authors with is_following_author=false" do
+      author = create(:user)
+      unfollowed_tweet = create(:tweet, user: author)
+
+      get :index
+      json = JSON.parse(response.body)
+      payload_tweet = json['tweets'].find { |t| t['id'] == unfollowed_tweet.id }
+
+      expect(payload_tweet).not_to be_nil
+      expect(payload_tweet['is_following_author']).to eq(false)
+    end
   end
 
   describe "POST #create" do
