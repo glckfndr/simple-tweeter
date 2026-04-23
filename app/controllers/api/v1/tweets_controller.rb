@@ -1,4 +1,4 @@
-class Api::V1::TweetsController < ApplicationController
+class Api::V1::TweetsController < Api::V1::ApplicationController
   before_action :authenticate_user!
   respond_to :json
 

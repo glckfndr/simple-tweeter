@@ -2,6 +2,21 @@ Rails.application.routes.draw do
   devise_for :users
   root to: "home#index"
   get 'home/index'
+
+  # Why: API v1 namespace provides JWT-authenticated endpoints for mobile/SPA clients.
+  namespace :api do
+    namespace :v1 do
+      devise_for :users, controllers: {
+        sessions: 'api/v1/sessions',
+        registrations: 'api/v1/registrations'
+      }
+      post 'tweets/create', to: 'tweets#create'
+      get  'tweets/index',  to: 'tweets#index'
+      get  'show/:id',      to: 'tweets#show'
+      delete 'destroy/:id', to: 'tweets#destroy'
+    end
+  end
+
   resources :tweets, only: [:index, :create, :destroy, :edit, :update] do
     member do
       post 'like', to: 'tweets#like'

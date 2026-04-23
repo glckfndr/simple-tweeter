@@ -2,7 +2,13 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+
+  # Why: jwt_subject provides the unique identifier embedded in the JWT sub claim.
+  def jwt_subject
+    id.to_s
+  end
 
   has_many :tweets, dependent: :destroy
   has_many :likes, dependent: :destroy
