@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
   include Devise::Test::IntegrationHelpers
 
+  let(:json_headers) { { "ACCEPT" => "application/json" } }
+
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
 
@@ -16,14 +18,19 @@ RSpec.describe "Users", type: :request do
       expect(response).to be_successful
     end
 
-    it "returns the correct user data" do
+    it "returns html for browser navigation" do
       get user_path(other_user)
+      expect(response.media_type).to eq("text/html")
+    end
+
+    it "returns the correct user data" do
+      get user_path(other_user), headers: json_headers
       json_response = JSON.parse(response.body)
       expect(json_response["username"]).to eq(other_user.username)
     end
 
     it "returns not found for missing user" do
-      get user_path(0)
+      get user_path(0), headers: json_headers
       expect(response).to have_http_status(:not_found)
     end
   end
@@ -92,7 +99,7 @@ RSpec.describe "Users", type: :request do
 
     it "returns the correct followees data" do
       user.followees << other_user
-      get followees_user_path(user)
+      get followees_user_path(user), headers: json_headers
       json_response = JSON.parse(response.body)
       expect(json_response["followees"].first["username"]).to eq(other_user.username)
     end

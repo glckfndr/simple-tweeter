@@ -3,7 +3,14 @@ class UsersController < ApplicationController
 
   def show
     is_following = current_user.followees.include?(@user)
-    render json: @user.as_json(include: { followers: { only: :username }, followees: { only: :username } }).merge(isFollowing: is_following, currentUser: current_user.username)
+
+    respond_to do |format|
+      format.html { render 'home/index' }
+      format.json do
+        render json: @user.as_json(include: { followers: { only: :username }, followees: { only: :username } })
+                          .merge(isFollowing: is_following, currentUser: current_user.username)
+      end
+    end
   end
 
   def follow

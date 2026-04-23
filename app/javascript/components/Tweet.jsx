@@ -1,4 +1,3 @@
-// filepath: /home/obula/railsProjects/internship_test_glckfndr_2025/app/javascript/components/Tweet.jsx
 import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosConfig';
 import './Tweet.css';
@@ -127,7 +126,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         <div>
           <div className='tweet__header'>
             <p className='tweet__user'>
-              {isUserCurrent() ? tweet.user.username :
+              {isUserCurrent() || !isLoggedIn ? tweet.user.username :
                 <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>}
             </p>
             <p className='tweet__like'>Likes: {likes}</p>
