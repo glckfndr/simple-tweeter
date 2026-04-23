@@ -3,7 +3,16 @@ class TweetsController < ApplicationController
   before_action :find_tweet, only: [:destroy, :edit, :update, :like, :unlike, :retweet, :unretweet]
 
   def index
-    @tweets = Tweet.all.includes(:retweets, :likes, :user).sort_by(&:created_at).reverse
+    page = params.fetch(:page, 1).to_i
+    per_page = params.fetch(:per_page, 20).to_i
+    page = 1 if page < 1
+    per_page = 20 if per_page < 1
+    per_page = [per_page, 50].min
+
+    @tweets = Tweet.includes(:retweets, :likes, :user)
+                   .order(created_at: :desc)
+                   .offset((page - 1) * per_page)
+                   .limit(per_page)
     render json: {
       tweets: @tweets.as_json(include: { user: { only: :username }, likes: { only: :user_id }, retweets: { only: :user_id } }),
       isLoggedIn: user_signed_in?,
@@ -79,11 +88,15 @@ class TweetsController < ApplicationController
     if existing_retweet
       render json: { notice: "You have already retweeted this tweet." }, status: :ok
     else
-      retweet = @tweet.retweets.create(user: current_user)
-      if retweet.persisted?
-        render json: { notice: "Tweet was successfully retweeted." }, status: :ok
+      if @tweet.user != current_user
+        retweet = @tweet.retweets.create(user: current_user)
+        if retweet.persisted?
+          render json: { notice: "Tweet was successfully retweeted." }, status: :ok
+        else
+          render json: { error: "Unable to retweet.", messages: retweet.errors.full_messages }, status: :unprocessable_entity
+        end
       else
-        render json: { error: "Unable to retweet.", messages: retweet.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: "You cannot retweet your own tweet." }, status: :forbidden
       end
     end
   end
