@@ -21,6 +21,11 @@ RSpec.describe "Users", type: :request do
       json_response = JSON.parse(response.body)
       expect(json_response["username"]).to eq(other_user.username)
     end
+
+    it "returns not found for missing user" do
+      get user_path(0)
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe "POST /users/:id/follow" do
@@ -32,6 +37,24 @@ RSpec.describe "Users", type: :request do
     it "returns a success response" do
       post follow_user_path(other_user)
       expect(response).to have_http_status(:ok)
+    end
+
+    it "does not allow following yourself" do
+      post follow_user_path(user)
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "is idempotent when following the same user twice" do
+      post follow_user_path(other_user)
+      post follow_user_path(other_user)
+
+      expect(response).to have_http_status(:ok)
+      expect(user.followee_relationships.where(followee: other_user).count).to eq(1)
+    end
+
+    it "returns not found for missing user" do
+      post follow_user_path(0)
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -49,6 +72,16 @@ RSpec.describe "Users", type: :request do
       delete unfollow_user_path(other_user)
       expect(response).to have_http_status(:ok)
     end
+
+    it "does not allow unfollowing yourself" do
+      delete unfollow_user_path(user)
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "returns not found for missing user" do
+      delete unfollow_user_path(0)
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe "GET /users/:id/followees" do
@@ -62,6 +95,11 @@ RSpec.describe "Users", type: :request do
       get followees_user_path(user)
       json_response = JSON.parse(response.body)
       expect(json_response["followees"].first["username"]).to eq(other_user.username)
+    end
+
+    it "returns not found for missing user" do
+      get followees_user_path(0)
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

@@ -7,13 +7,30 @@ class UsersController < ApplicationController
   end
 
   def follow
-    current_user.followees << @user
-    render json: { notice: "Successfully followed #{@user.username}.", currentUser: current_user.username }, status: :ok
+    if current_user != @user
+      follow = current_user.followee_relationships.find_or_create_by(followee: @user)
+      if follow.persisted?
+        notice = follow.previously_new_record? ? "Successfully followed #{@user.username}." : "You are already following #{@user.username}."
+        render json: { notice: notice, currentUser: current_user.username }, status: :ok
+      else
+        render json: { error: "Unable to follow user.", messages: follow.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "You cannot follow yourself." }, status: :forbidden
+    end
   end
 
   def unfollow
-    current_user.followees.delete(@user)
-    render json: { notice: "Successfully unfollowed #{@user.username}.", currentUser: current_user.username }, status: :ok
+    if current_user != @user
+      destroyed = current_user.followee_relationships.where(followee: @user).destroy_all.any?
+      if destroyed
+        render json: { notice: "Successfully unfollowed #{@user.username}.", currentUser: current_user.username }, status: :ok
+      else
+        render json: { notice: "You are not following #{@user.username}.", currentUser: current_user.username }, status: :ok
+      end
+    else
+      render json: { error: "You cannot unfollow yourself." }, status: :forbidden
+    end
   end
 
   def followees
@@ -25,6 +42,9 @@ class UsersController < ApplicationController
   private
 
   def find_user
-    @user = User.find(params[:id])
+    @user = User.find_by(id: params[:id])
+    return if @user
+
+    render json: { error: "User not found" }, status: :not_found
   end
 end
