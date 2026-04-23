@@ -1,0 +1,91 @@
+.tweet {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
+  border-bottom: 1px solid #ccc;
+  margin: 0.5rem;
+  background-color: rgb(169, 192, 209);
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 95%;
+
+}
+
+.tweet__header {
+  display: flex;
+  justify-content: space-between;
+  width: 72rem;
+  color: white;
+  background-color: rgb(147, 166, 181);
+  margin: 0;
+  border-radius: 2px;
+}
+
+.tweet__user {
+  font-weight: bold;
+  font-size: 1.75rem;
+  margin: 0;
+  margin-left: 1rem;
+  color: rgb(40, 40, 24);
+}
+
+.tweet__content {
+  margin: 0;
+  margin-left: 1rem;
+  line-height: 2rem;
+  font-size: 1.5rem;
+
+}
+
+.tweet__like {
+  margin: 0;
+  line-height: 2rem;
+  font-size: 1.5rem;
+  background-color: rgb(52, 102, 144);
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  place-self: end;
+}
+
+.tweet__comments {
+  /* Why: comments are grouped inside each tweet card so discussion context stays visible. */
+  width: 100%;
+  padding: 0.5rem 1rem 1rem;
+  box-sizing: border-box;
+}
+
+.tweet__comments-title {
+  font-weight: 700;
+  margin: 0.3rem 0;
+}
+
+.tweet__comment-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.35rem 0;
+  flex-wrap: wrap;
+}
+
+.tweet__comment-author {
+  font-weight: 700;
+}
+
+.tweet__comment-content {
+  flex: 1;
+}
+
+.tweet__comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.tweet__comment-input {
+  flex: 1;
+  border: 1px solid #9ba3b8;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}

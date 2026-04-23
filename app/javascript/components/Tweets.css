@@ -1,18 +1,37 @@
 .tweets {
-  background-color: #92c0df;
-  width: 80%;
-  height: 100%;
-  font-size: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  gap: 1.0rem
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: beige;
+  padding-top: 1px;
+}
+
+.tweets--center {
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.tweets__title {
+  text-align: center;
 }
 
 .tweets__list {
   display: flex;
   flex-direction: column;
-  gap: 1.0rem;
-  margin: 1rem 1rem;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.tweets__filter {
+  display: flex;
+  justify-content: space-around;
+
+  margin: 0;
+  padding: 0;
+  height: 3rem;
+}
+
+button.active {
+  background-color: rgb(193, 131, 25);
 }

@@ -1,30 +1,101 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from '../utils/axiosConfig';
+import createTweetChannel from '../channels/tweets_channel';
+import Tweet from './Tweet';
+import CreateTweet from './CreateTweet';
 import './Tweets.css';
-import TweetItem from './TweetItem';
 
-function Tweets() {
+const Tweets = () => {
   const [tweets, setTweets] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [filter, setFilter] = useState('all'); // 'all' or 'followees'
+  const [followees, setFollowees] = useState([]);
 
+  // Why: feed loading and live subscription should happen once, not on filter/user changes.
   useEffect(() => {
-    axios.get('api/v1/tweets/index', {headers: { "Content-Type": "application/json" }})
+    axios.get('/tweets')
       .then(response => {
-        console.log(response.data);
-        setTweets(response.data);
+        setTweets(response.data.tweets);
+        setIsLoggedIn(response.data.isLoggedIn);
+        setCurrentUser(response.data.currentUser);
       })
       .catch(error => {
-        console.error('There was an error fetching the tweets!', error);
+        console.error("There was an error fetching the tweets!", error);
       });
+
+    const subscription = createTweetChannel((data) => {
+      if (data.tweet) {
+        setTweets((prevTweets) => [data.tweet, ...prevTweets]);
+      } else if (data.delete) {
+        setTweets((prevTweets) => prevTweets.filter(tweet => tweet.id !== data.delete));
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
+  // Why: followees depend on authenticated user identity, not on feed filter toggles.
+  useEffect(() => {
+    if (!currentUser?.id) {
+      setFollowees([]);
+      return;
+    }
+
+    axios.get(`/users/${currentUser.id}/followees`)
+      .then(response => {
+        setFollowees(response.data.followees);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the followees!", error);
+      });
+  }, [currentUser?.id]);
+
+  function getFolloweesTweets() {
+    return tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
+  }
+
+  const getFolloweeRetweets = () => {
+
+    return tweets.filter(tweet => tweet.retweets &&
+      tweet.retweets.some(retweet =>
+        followees.some(followee => followee.id === retweet.user_id)));
+  };
+
+  const filteredTweets = filter === 'all' ? tweets :
+    filter === 'followees' ? getFolloweesTweets() :
+      getFolloweeRetweets();
+
   return (
-    <div className='tweets'>
-      <h2>All Tweets</h2>
-      <ul className='tweets__list'>
-        {tweets.map(tweet => (<TweetItem key={tweet.id} tweet={tweet} />))}
+    <div className={"tweets " + (!isLoggedIn ? 'tweets--center' : '')}>
+      {!isLoggedIn && <h3 className='tweets__title'>Tweets</h3>}
+      {isLoggedIn && <CreateTweet />}
+      <div className="tweets__filter">
+        {isLoggedIn && <>
+          <button onClick={() => setFilter('all')} className={"btn " + (filter === 'all' ? 'active' : '')}>
+            All Tweets
+          </button>
+          <button onClick={() => setFilter('followees')} className={"btn btn--joy " + (filter === 'followees' ? 'active' : '')}>
+            Followees Tweets
+          </button>
+          <button onClick={() => setFilter('retweeted')} className={"btn btn--primary " + (filter === 'retweeted' ? 'active' : '')}>Retweeted Tweets</button>
+        </>}
+      </div>
+      <ul className="tweets__list">
+        {filteredTweets.map(tweet => (
+          <li key={tweet.id} className="tweets__item">
+            <Tweet
+              tweet={tweet}
+              currentUser={currentUser}
+              isLoggedIn={isLoggedIn}
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );
-}
+};
 
 export default Tweets;

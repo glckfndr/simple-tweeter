@@ -1,0 +1,163 @@
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  font-size: 2rem;
+  margin: 0;
+  padding: 0;
+  background-color: #aaa;
+  width: 100vw;
+  height: 100vh;
+}
+
+header {
+  position: fixed;
+  top: 1rem;
+  width: 80rem;
+  background-color: white;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notice {
+  color: green;
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 2rem;
+  transition: opacity 1s ease-out;
+  opacity: 1;
+}
+
+.notice.fade-out {
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.alert {
+  color: red;
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 2rem;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+
+}
+
+h1 {
+  color: #333;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+.actions {
+  margin-top: 20px;
+}
+
+.actions input {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.actions input:hover {
+  background-color: #0056b3;
+}
+
+.links {
+  margin-top: 20px;
+}
+
+/* nav bar */
+.navbar {
+  background-color: #3663a1;
+  height: 5rem;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.navbar__brand {
+  color: white;
+  font-size: 2.5rem;
+  text-decoration: none;
+
+}
+
+.navbar__home {
+  color: white;
+  font-size: 2.5rem;
+  text-decoration: none;
+  color: white;
+}
+
+.navbar__home:hover {
+  opacity: 0.75;
+}
+
+.nav__user {
+  color: white;
+  font-size: 2rem;
+  font-style: italic;
+}
+
+.navbar__list {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  height: 100%;
+  gap: 1rem;
+  list-style: none;
+}
+
+/* buttons */
+.btn {
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #184f1e;
+  margin-right: 2px;
+}
+
+.btn--primary {
+  background-color: #007bff;
+}
+
+.btn--danger {
+  background-color: #896932;
+}
+
+.btn--joy {
+  background-color: #cc768c;
+}
+
+.btn--like {
+  background-color: #20adc0;
+}
+
+.btn--small {
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
+  height: 3.0rem;
+}
+
+.btn:hover {
+  opacity: 0.75;
+}

@@ -1,26 +1,32 @@
 class User < ApplicationRecord
-  has_many :tweets, dependent: :destroy
-
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :jwt_authenticatable, jwt_revocation_strategy: self # include devise-jwt
+         :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+
+  # Why: jwt_subject provides the unique identifier embedded in the JWT sub claim.
+  def jwt_subject
+    id.to_s
+  end
+
+  has_many :tweets, dependent: :destroy
+  has_many :likes, dependent: :destroy
+
+  has_many :follower_relationships, foreign_key: :followee_id, class_name: 'Follow', dependent: :destroy
+  has_many :followers, through: :follower_relationships, source: :follower
+
+  has_many :followee_relationships, foreign_key: :follower_id, class_name: 'Follow', dependent: :destroy
+  has_many :followees, through: :followee_relationships, source: :followee
+
+  has_many :retweets, dependent: :destroy
+  # Why: user cleanup must cascade to authored comments to avoid orphans.
+  has_many :comments, dependent: :destroy
+
   validates :username, presence: true, length: { minimum: 3 }, uniqueness: true
   validates :email, uniqueness: true
   validate :validate_email
   validate :validate_password, if: -> { new_record? || !password.nil? }
-
-  def self.jwt_revoked?(decoded_token, user)
-    return false if user.last_logout_at.nil?
-
-    issued_at = Time.at(decoded_token['iat']).utc
-    revoked = issued_at < user.last_logout_at
-
-    revoked
-  end
-
-  def self.revoke_jwt(decoded_token, user)
-    user.update(last_logout_at: Time.current)
-  end
 
   private
 
