@@ -123,16 +123,47 @@ RSpec.describe TweetsController, type: :controller do
   end
 
   describe "POST #retweet" do
-    it "retweets the tweet" do
-      post :retweet, params: { id: tweet.to_param }
+    let(:other_user) { create(:user) }
+    let(:other_tweet) { create(:tweet, user: other_user) }
+
+    it "retweets another user's tweet" do
+      post :retweet, params: { id: other_tweet.to_param }
       expect(response).to have_http_status(:ok)
+      expect(other_tweet.retweets.where(user: user).count).to eq(1)
+    end
+
+    it "does not allow retweeting own tweet" do
+      post :retweet, params: { id: tweet.to_param }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "is idempotent when retweeting the same tweet twice" do
+      post :retweet, params: { id: other_tweet.to_param }
+      post :retweet, params: { id: other_tweet.to_param }
+
+      expect(response).to have_http_status(:ok)
+      expect(other_tweet.retweets.where(user: user).count).to eq(1)
     end
   end
 
-  describe "POST #unretweet" do
-    it "unretweets the tweet" do
-      post :unretweet, params: { id: tweet.to_param }
+  describe "DELETE #unretweet" do
+    let(:other_user) { create(:user) }
+    let(:other_tweet) { create(:tweet, user: other_user) }
+
+    it "removes an existing retweet" do
+      other_tweet.retweets.create!(user: user)
+
+      expect {
+        delete :unretweet, params: { id: other_tweet.to_param }
+      }.to change { other_tweet.retweets.where(user: user).count }.from(1).to(0)
+
       expect(response).to have_http_status(:ok)
+    end
+
+    it "is idempotent when retweet does not exist" do
+      delete :unretweet, params: { id: other_tweet.to_param }
+      expect(response).to have_http_status(:ok)
+      expect(other_tweet.retweets.where(user: user).count).to eq(0)
     end
   end
 end
