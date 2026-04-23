@@ -12,6 +12,7 @@ const UserProfile = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Why: prevent state updates after unmount while async profile fetch is in flight.
     let isMounted = true;
 
     const fetchProfile = async () => {
@@ -49,6 +50,7 @@ const UserProfile = () => {
   const handleFollow = async () => {
     try {
       await axios.post(`/users/${id}/follow`);
+      // Why: optimistic update keeps follow UI responsive without a full refetch.
       setIsFollowing(true);
       setProfile((prev) => {
         if (!prev) return prev;

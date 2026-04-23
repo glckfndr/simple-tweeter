@@ -4,6 +4,7 @@ RSpec.describe TweetsController, type: :controller do
   include Devise::Test::IntegrationHelpers
   include Devise::Test::ControllerHelpers
 
+  # Why: signed-in baseline mirrors how tweet mutations are used in the app.
   let(:user) { create(:user) }
   let(:tweet) { create(:tweet, user: user) }
 

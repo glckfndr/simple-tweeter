@@ -5,6 +5,7 @@ class UsersController < ApplicationController
     is_following = current_user.followees.include?(@user)
 
     respond_to do |format|
+      # Why: HTML requests must return the SPA shell for client-side profile routing.
       format.html { render 'home/index' }
       format.json do
         render json: @user.as_json(include: { followers: { only: :username }, followees: { only: :username } })
@@ -15,6 +16,7 @@ class UsersController < ApplicationController
 
   def follow
     if current_user != @user
+      # Why: follow should be idempotent to handle repeated UI actions safely.
       follow = current_user.followee_relationships.find_or_create_by(followee: @user)
       if follow.persisted?
         notice = follow.previously_new_record? ? "Successfully followed #{@user.username}." : "You are already following #{@user.username}."

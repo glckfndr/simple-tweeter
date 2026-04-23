@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
   include Devise::Test::IntegrationHelpers
 
+  # Why: show supports both SPA HTML and JSON API, so tests opt into JSON explicitly.
   let(:json_headers) { { "ACCEPT" => "application/json" } }
 
   let(:user) { create(:user) }
