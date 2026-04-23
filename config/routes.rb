@@ -19,4 +19,5 @@ Rails.application.routes.draw do
       get 'followees', to: 'users#followees'
     end
   end
+  get '/*path' => 'home#index', constraints: ->(req) { !req.xhr? && req.format.html? }
 end
