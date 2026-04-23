@@ -13,7 +13,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   // Why: comment state is local so the card can update immediately after create/delete.
   const [comments, setComments] = useState(tweet.comments || []);
   const [commentContent, setCommentContent] = useState('');
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(Boolean(tweet.is_following_author));
   const [retweets, setRetweets] = useState(tweet.retweets ? tweet.retweets.length : 0);
   const [isRetweeted, setIsRetweeted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -21,14 +21,9 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const isUserCurrent = () => currentUser.name === tweet.user.username;
 
   useEffect(() => {
+    setIsFollowing(Boolean(tweet.is_following_author));
+
     if (!isLoggedIn) return;
-    axios.get(`/users/${tweet.user_id}`)
-      .then(response => {
-        setIsFollowing(response.data.followers.some(follower => follower.username === currentUser.name));
-      })
-      .catch(error => {
-        console.error('Tweet got an error fetching the user!', error);
-      });
 
     if (tweet.retweets) {
       setIsRetweeted(tweet.retweets.some(retweet => retweet.user_id === currentUser.id));
@@ -37,7 +32,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
     if (tweet.likes) {
       setIsLiked(tweet.likes.some(like => like.user_id === currentUser.id));
     }
-  }, [tweet.user_id, currentUser.name, tweet.retweets, tweet.likes]);
+  }, [tweet.is_following_author, tweet.retweets, tweet.likes, isLoggedIn, currentUser.id]);
 
   const handleDelete = () => {
     axios.delete(`/tweets/${tweet.id}`)

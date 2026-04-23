@@ -14,13 +14,29 @@ class TweetsController < ApplicationController
                    .order(created_at: :desc)
                    .offset((page - 1) * per_page)
                    .limit(per_page)
-    render json: {
-      tweets: @tweets.as_json(include: {
+
+    # Why: compute follow state in one query to avoid per-tweet /users/:id requests.
+    followed_author_ids = if user_signed_in?
+      current_user.followee_relationships
+                  .where(followee_id: @tweets.map(&:user_id).uniq)
+                  .pluck(:followee_id)
+    else
+      []
+    end
+
+    tweets_payload = @tweets.map do |tweet|
+      tweet_data = tweet.as_json(include: {
         user: { only: :username },
         likes: { only: :user_id },
         retweets: { only: :user_id },
         comments: { include: { user: { only: :username } }, only: [:id, :content, :user_id, :created_at] }
-      }),
+      })
+      tweet_data['is_following_author'] = followed_author_ids.include?(tweet.user_id)
+      tweet_data
+    end
+
+    render json: {
+      tweets: tweets_payload,
       isLoggedIn: user_signed_in?,
       currentUser: {name: current_user&.username, id: current_user&.id}
     }
