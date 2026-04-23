@@ -8,8 +8,14 @@ class UsersController < ApplicationController
       # Why: HTML requests must return the SPA shell for client-side profile routing.
       format.html { render 'home/index' }
       format.json do
-        render json: @user.as_json(include: { followers: { only: :username }, followees: { only: :username } })
-                          .merge(isFollowing: is_following, currentUser: current_user.username)
+        render json: {
+          id: @user.id,
+          username: @user.username,
+          followers: @user.followers.pluck(:username),
+          followees: @user.followees.pluck(:username),
+          isFollowing: is_following,
+          currentUser: current_user.username
+        }
       end
     end
   end
@@ -55,5 +61,6 @@ class UsersController < ApplicationController
     return if @user
 
     render json: { error: "User not found" }, status: :not_found
+    return
   end
 end
