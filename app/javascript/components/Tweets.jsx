@@ -12,6 +12,7 @@ const Tweets = () => {
   const [filter, setFilter] = useState('all'); // 'all' or 'followees'
   const [followees, setFollowees] = useState([]);
 
+  // Why: feed loading and live subscription should happen once, not on filter/user changes.
   useEffect(() => {
     axios.get('/tweets')
       .then(response => {
@@ -22,14 +23,6 @@ const Tweets = () => {
       .catch(error => {
         console.error("There was an error fetching the tweets!", error);
       });
-    currentUser?.id &&
-      axios.get(`/users/${currentUser.id}/followees`)
-        .then(response => {
-          setFollowees(response.data.followees);
-        })
-        .catch(error => {
-          console.error("There was an error fetching the followees!", error);
-        });
 
     const subscription = createTweetChannel((data) => {
       if (data.tweet) {
@@ -42,7 +35,23 @@ const Tweets = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [currentUser?.name, filter]);
+  }, []);
+
+  // Why: followees depend on authenticated user identity, not on feed filter toggles.
+  useEffect(() => {
+    if (!currentUser?.id) {
+      setFollowees([]);
+      return;
+    }
+
+    axios.get(`/users/${currentUser.id}/followees`)
+      .then(response => {
+        setFollowees(response.data.followees);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the followees!", error);
+      });
+  }, [currentUser?.id]);
 
   function getFolloweesTweets() {
     return tweets.filter(tweet => followees.some(followee => followee.id === tweet.user_id));
