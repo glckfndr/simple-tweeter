@@ -9,6 +9,8 @@ Rails.application.routes.draw do
       post 'retweet', to: 'tweets#retweet'
       delete 'unretweet', to: 'tweets#unretweet'
     end
+    # Why: comments are scoped to a tweet, so nested routes keep ownership explicit.
+    resources :comments, only: [:create, :destroy]
   end
   resources :users, only: [:show] do
     member do

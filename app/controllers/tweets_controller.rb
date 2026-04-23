@@ -3,18 +3,24 @@ class TweetsController < ApplicationController
   before_action :find_tweet, only: [:destroy, :edit, :update, :like, :unlike, :retweet, :unretweet]
 
   def index
+    # Why: bounded pagination keeps feed queries predictable as data grows.
     page = params.fetch(:page, 1).to_i
     per_page = params.fetch(:per_page, 20).to_i
     page = 1 if page < 1
     per_page = 20 if per_page < 1
     per_page = [per_page, 50].min
 
-    @tweets = Tweet.includes(:retweets, :likes, :user)
+    @tweets = Tweet.includes(:retweets, :likes, :comments, :user)
                    .order(created_at: :desc)
                    .offset((page - 1) * per_page)
                    .limit(per_page)
     render json: {
-      tweets: @tweets.as_json(include: { user: { only: :username }, likes: { only: :user_id }, retweets: { only: :user_id } }),
+      tweets: @tweets.as_json(include: {
+        user: { only: :username },
+        likes: { only: :user_id },
+        retweets: { only: :user_id },
+        comments: { include: { user: { only: :username } }, only: [:id, :content, :user_id, :created_at] }
+      }),
       isLoggedIn: user_signed_in?,
       currentUser: {name: current_user&.username, id: current_user&.id}
     }
@@ -67,6 +73,7 @@ class TweetsController < ApplicationController
 
   def like
     if @tweet.user != current_user
+      # Why: repeated clicks should not create duplicates or raise unique-index errors.
       like = @tweet.likes.find_or_create_by(user: current_user)
       if like.persisted?
         render json: { notice: "Tweet was successfully liked." }, status: :ok

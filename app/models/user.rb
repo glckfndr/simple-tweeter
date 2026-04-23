@@ -14,6 +14,8 @@ class User < ApplicationRecord
   has_many :followees, through: :followee_relationships, source: :followee
 
   has_many :retweets, dependent: :destroy
+  # Why: user cleanup must cascade to authored comments to avoid orphans.
+  has_many :comments, dependent: :destroy
 
   validates :username, presence: true, length: { minimum: 3 }, uniqueness: true
   validates :email, uniqueness: true
