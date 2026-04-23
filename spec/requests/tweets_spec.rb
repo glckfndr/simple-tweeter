@@ -53,6 +53,13 @@ RSpec.describe TweetsController, type: :controller do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context "when tweet does not exist" do
+      it "returns not found" do
+        patch :update, params: { id: 0, tweet: { content: 'Updated content' } }
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   describe "DELETE #destroy" do
@@ -62,6 +69,11 @@ RSpec.describe TweetsController, type: :controller do
         delete :destroy, params: { id: tweet.to_param }
       }.to change(Tweet, :count).by(-1)
       expect(response).to have_http_status(:no_content)
+    end
+
+    it "returns not found when tweet does not exist" do
+      delete :destroy, params: { id: 0 }
+      expect(response).to have_http_status(:not_found)
     end
   end
 

@@ -13,15 +13,23 @@ class TweetsController < ApplicationController
   end
 
   def edit
-    render json: @tweet.as_json(include: { user: { only: :username } })
+    if @tweet.user == current_user
+      render json: @tweet.as_json(include: { user: { only: :username } })
+    else
+      render json: { error: "You can only edit your own tweets" }, status: :forbidden
+    end
   end
 
   def update
-    if @tweet.update(tweet_params)
-      flash[:notice] = "Tweet was successfully updated."
-      render json: @tweet.as_json(include: { user: { only: :username } }), status: :ok
+    if @tweet.user == current_user
+      if @tweet.update(tweet_params)
+        flash[:notice] = "Tweet was successfully updated."
+        render json: @tweet.as_json(include: { user: { only: :username } }), status: :ok
+      else
+        render json: @tweet.errors, status: :unprocessable_entity
+      end
     else
-      render json: @tweet.errors, status: :unprocessable_entity
+      render json: { error: "You can only update your own tweets" }, status: :forbidden
     end
   end
 
@@ -80,8 +88,11 @@ class TweetsController < ApplicationController
   private
 
   def find_tweet
-    @tweet = Tweet.find(params[:id])
-    render json: { error: "Tweet not found" }, status: :not_found unless @tweet
+    @tweet = Tweet.find_by(id: params[:id])
+    unless @tweet
+      render json: { error: "Tweet not found" }, status: :not_found
+      return
+    end
   end
 
   def tweet_params
