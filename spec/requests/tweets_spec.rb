@@ -78,9 +78,26 @@ RSpec.describe TweetsController, type: :controller do
   end
 
   describe "POST #like" do
-    it "likes the tweet" do
-      post :like, params: { id: tweet.to_param }
+    let(:other_user) { create(:user) }
+    let(:other_tweet) { create(:tweet, user: other_user) }
+
+    it "likes another user's tweet" do
+      post :like, params: { id: other_tweet.to_param }
       expect(response).to have_http_status(:ok)
+      expect(other_tweet.likes.where(user: user).count).to eq(1)
+    end
+
+    it "does not allow liking own tweet" do
+      post :like, params: { id: tweet.to_param }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "is idempotent when liking the same tweet twice" do
+      post :like, params: { id: other_tweet.to_param }
+      post :like, params: { id: other_tweet.to_param }
+
+      expect(response).to have_http_status(:ok)
+      expect(other_tweet.likes.where(user: user).count).to eq(1)
     end
   end
 

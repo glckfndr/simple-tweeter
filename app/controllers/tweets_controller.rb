@@ -57,8 +57,16 @@ class TweetsController < ApplicationController
   end
 
   def like
-    @tweet.likes.create(user: current_user)
-    render json: { notice: "Tweet was successfully liked." }, status: :ok
+    if @tweet.user != current_user
+      like = @tweet.likes.find_or_create_by(user: current_user)
+      if like.persisted?
+        render json: { notice: "Tweet was successfully liked." }, status: :ok
+      else
+        render json: { error: "Unable to like tweet.", messages: like.errors.full_messages }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "You cannot like your own tweet." }, status: :forbidden
+    end
   end
 
   def unlike
