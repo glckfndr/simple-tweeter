@@ -10,6 +10,9 @@ import RetweetButtons from './RetweetButtons';
 const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [likes, setLikes] = useState(tweet.likes ? tweet.likes.length : 0);
+  // Why: comment state is local so the card can update immediately after create/delete.
+  const [comments, setComments] = useState(tweet.comments || []);
+  const [commentContent, setCommentContent] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
   const [retweets, setRetweets] = useState(tweet.retweets ? tweet.retweets.length : 0);
   const [isRetweeted, setIsRetweeted] = useState(false);
@@ -118,6 +121,30 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
       });
   };
 
+  const handleCreateComment = () => {
+    // Why: avoid network calls for empty input and keep API noise low.
+    if (!commentContent.trim()) return;
+
+    axios.post(`/tweets/${tweet.id}/comments`, { comment: { content: commentContent.trim() } })
+      .then(response => {
+        setComments((prevComments) => [...prevComments, response.data]);
+        setCommentContent('');
+      })
+      .catch(error => {
+        console.error('Tweet got an error creating a comment!', error);
+      });
+  };
+
+  const handleDeleteComment = (commentId) => {
+    axios.delete(`/tweets/${tweet.id}/comments/${commentId}`)
+      .then(() => {
+        setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
+      })
+      .catch(error => {
+        console.error('Tweet got an error deleting a comment!', error);
+      });
+  };
+
   return (
     <div className='tweet'>
       {isLoggedIn && isEditing ? (
@@ -133,6 +160,38 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
 
           </div>
           <p className='tweet__content'>{tweet.content}</p>
+          <div className='tweet__comments'>
+            <p className='tweet__comments-title'>Comments: {comments.length}</p>
+            {comments.map((comment) => (
+              <div key={comment.id} className='tweet__comment-item'>
+                <span className='tweet__comment-author'>{comment.user?.username || 'Unknown'}:</span>
+                <span className='tweet__comment-content'>{comment.content}</span>
+                {isLoggedIn && comment.user_id === currentUser.id && (
+                  <button
+                    className='btn btn--small btn--danger'
+                    onClick={() => handleDeleteComment(comment.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {isLoggedIn && (
+              <div className='tweet__comment-form'>
+                <input
+                  className='tweet__comment-input'
+                  type='text'
+                  value={commentContent}
+                  placeholder='Write a comment...'
+                  onChange={(e) => setCommentContent(e.target.value)}
+                />
+                <button className='btn btn--small btn--primary' onClick={handleCreateComment}>
+                  Comment
+                </button>
+              </div>
+            )}
+          </div>
 
           {isLoggedIn && isUserCurrent() &&
             <>

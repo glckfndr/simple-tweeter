@@ -48,3 +48,44 @@
   padding: 0 0.5rem;
   place-self: end;
 }
+
+.tweet__comments {
+  /* Why: comments are grouped inside each tweet card so discussion context stays visible. */
+  width: 100%;
+  padding: 0.5rem 1rem 1rem;
+  box-sizing: border-box;
+}
+
+.tweet__comments-title {
+  font-weight: 700;
+  margin: 0.3rem 0;
+}
+
+.tweet__comment-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.35rem 0;
+  flex-wrap: wrap;
+}
+
+.tweet__comment-author {
+  font-weight: 700;
+}
+
+.tweet__comment-content {
+  flex: 1;
+}
+
+.tweet__comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.tweet__comment-input {
+  flex: 1;
+  border: 1px solid #9ba3b8;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
