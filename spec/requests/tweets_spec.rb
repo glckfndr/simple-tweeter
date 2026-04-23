@@ -101,10 +101,24 @@ RSpec.describe TweetsController, type: :controller do
     end
   end
 
-  describe "POST #unlike" do
-    it "unlikes the tweet" do
-      post :unlike, params: { id: tweet.to_param }
+  describe "DELETE #unlike" do
+    let(:other_user) { create(:user) }
+    let(:other_tweet) { create(:tweet, user: other_user) }
+
+    it "removes an existing like" do
+      other_tweet.likes.create!(user: user)
+
+      expect {
+        delete :unlike, params: { id: other_tweet.to_param }
+      }.to change { other_tweet.likes.where(user: user).count }.from(1).to(0)
+
       expect(response).to have_http_status(:ok)
+    end
+
+    it "is idempotent when like does not exist" do
+      delete :unlike, params: { id: other_tweet.to_param }
+      expect(response).to have_http_status(:ok)
+      expect(other_tweet.likes.where(user: user).count).to eq(0)
     end
   end
 
