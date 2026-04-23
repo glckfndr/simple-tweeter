@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from '../utils/axiosConfig';
 import createTweetChannel from '../channels/tweets_channel';
 import Tweet from './Tweet';
@@ -85,12 +85,13 @@ const Tweets = () => {
       </div>
       <ul className="tweets__list">
         {filteredTweets.map(tweet => (
-          <Tweet
-            key={tweet.id}
-            tweet={tweet}
-            currentUser={currentUser}
-            isLoggedIn={isLoggedIn}
-          />
+          <li key={tweet.id} className="tweets__item">
+            <Tweet
+              tweet={tweet}
+              currentUser={currentUser}
+              isLoggedIn={isLoggedIn}
+            />
+          </li>
         ))}
       </ul>
     </div>

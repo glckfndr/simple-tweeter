@@ -14,11 +14,15 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
   const [comments, setComments] = useState(tweet.comments || []);
   const [commentContent, setCommentContent] = useState('');
   const [isFollowing, setIsFollowing] = useState(Boolean(tweet.is_following_author));
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [retweetLoading, setRetweetLoading] = useState(false);
   const [retweets, setRetweets] = useState(tweet.retweets ? tweet.retweets.length : 0);
   const [isRetweeted, setIsRetweeted] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
-  const isUserCurrent = () => currentUser.name === tweet.user.username;
+  // Why: guard for null currentUser (guest mode) to avoid crash.
+  const isUserCurrent = () => currentUser && currentUser.name === tweet.user.username;
 
   useEffect(() => {
     setIsFollowing(Boolean(tweet.is_following_author));
@@ -48,11 +52,20 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
     setIsEditing(true);
   };
 
+  // Why: update local tweet state after edit so UI reflects changes immediately.
   const handleTweetUpdated = (updatedTweet) => {
     setIsEditing(false);
+    if (updatedTweet) {
+      // Update all tweet fields that may have changed
+      Object.keys(updatedTweet).forEach(key => {
+        tweet[key] = updatedTweet[key];
+      });
+    }
   };
 
   const handleLike = () => {
+    if (likeLoading) return;
+    setLikeLoading(true);
     axios.post(`/tweets/${tweet.id}/like`)
       .then(response => {
         setLikes(prev => prev + 1);
@@ -60,10 +73,13 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
       })
       .catch(error => {
         console.error('Tweet got an error liking the tweet!', error);
-      });
+      })
+      .finally(() => setLikeLoading(false));
   };
 
   const handleUnlike = () => {
+    if (likeLoading) return;
+    setLikeLoading(true);
     axios.delete(`/tweets/${tweet.id}/unlike`)
       .then(response => {
         setLikes(prev => prev - 1);
@@ -71,30 +87,39 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
       })
       .catch(error => {
         console.error('Tweet got an error unliking the tweet!', error);
-      });
+      })
+      .finally(() => setLikeLoading(false));
   };
 
   const handleFollow = () => {
+    if (followLoading) return;
+    setFollowLoading(true);
     axios.post(`/users/${tweet.user_id}/follow`)
       .then(response => {
         setIsFollowing(true);
       })
       .catch(error => {
         console.error('Tweet got an error an following the user!', error);
-      });
+      })
+      .finally(() => setFollowLoading(false));
   };
 
   const handleUnfollow = () => {
+    if (followLoading) return;
+    setFollowLoading(true);
     axios.delete(`/users/${tweet.user_id}/unfollow`)
       .then(response => {
         setIsFollowing(false);
       })
       .catch(error => {
         console.error('Tweet got an error unfollowing the user!', error);
-      });
+      })
+      .finally(() => setFollowLoading(false));
   };
 
   const handleRetweet = () => {
+    if (retweetLoading) return;
+    setRetweetLoading(true);
     axios.post(`/tweets/${tweet.id}/retweet`)
       .then(response => {
         setRetweets(retweets + 1);
@@ -102,10 +127,13 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
       })
       .catch(error => {
         console.error('Tweet got an error retweeting the tweet!', error);
-      });
+      })
+      .finally(() => setRetweetLoading(false));
   };
 
   const handleUnretweet = () => {
+    if (retweetLoading) return;
+    setRetweetLoading(true);
     axios.delete(`/tweets/${tweet.id}/unretweet`)
       .then(response => {
         setRetweets(retweets - 1);
@@ -113,7 +141,8 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
       })
       .catch(error => {
         console.error('Tweet got an error unretweeting the tweet!', error);
-      });
+      })
+      .finally(() => setRetweetLoading(false));
   };
 
   const handleCreateComment = () => {
@@ -148,7 +177,7 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
         <div>
           <div className='tweet__header'>
             <p className='tweet__user'>
-              {isUserCurrent() || !isLoggedIn ? tweet.user.username :
+              {!isLoggedIn || isUserCurrent() ? tweet.user.username :
                 <Link to={`/users/${tweet.user_id}`}>{tweet.user.username}</Link>}
             </p>
             <p className='tweet__like'>Likes: {likes}</p>
@@ -200,9 +229,9 @@ const Tweet = ({ tweet, currentUser, isLoggedIn }) => {
           }
           {isLoggedIn && !isUserCurrent() &&
             <>
-              <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} />
-              <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} />
-              <RetweetButtons isRetweeted={isRetweeted} handleRetweet={handleRetweet} handleUnretweet={handleUnretweet} />
+              <LikeButtons isLiked={isLiked} handleLike={handleLike} handleUnlike={handleUnlike} disabled={likeLoading} />
+              <FollowButtons isFollowing={isFollowing} handleFollow={handleFollow} handleUnfollow={handleUnfollow} disabled={followLoading} />
+              <RetweetButtons isRetweeted={isRetweeted} handleRetweet={handleRetweet} handleUnretweet={handleUnretweet} disabled={retweetLoading} />
             </>}
         </div>
       )}
