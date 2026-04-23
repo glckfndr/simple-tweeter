@@ -10,11 +10,15 @@ class Tweet < ApplicationRecord
 
   def as_json(options = {})
     # Why: feed UI needs interaction metadata in one response to avoid N+1 client requests.
-    super(options.merge(include: {
-      user: { only: [:username] },
-      likes: { only: [:user_id] },
-      retweets: { only: [:user_id] },
-      comments: { include: { user: { only: [:username] } }, only: [:id, :content, :user_id, :created_at] }
-    }))
+    # Defaults are the base; caller-provided options take precedence.
+    defaults = {
+      include: {
+        user: { only: [:username] },
+        likes: { only: [:user_id] },
+        retweets: { only: [:user_id] },
+        comments: { include: { user: { only: [:username] } }, only: [:id, :content, :user_id, :created_at] }
+      }
+    }
+    super(defaults.merge(options))
   end
 end
